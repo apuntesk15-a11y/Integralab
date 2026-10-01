@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4338CA">
+<title>∫ntegraLab</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- KaTeX (fórmulas matemáticas) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+
+<style>
+:root{
+  --ink:#1E1B4B; --ink-soft:#5B5A7E; --bg:#F5F4FF; --card:#FFFFFF; --line:#E4E2F7;
+  --indigo:#4338CA; --indigo-2:#6366F1;
+  --coral:#F43F5E;  --coral-bg:#FFE9ED;
+  --teal:#0D9488;   --teal-bg:#D9F7F2;
+  --violet:#7C3AED; --violet-bg:#EEE5FF;
+  --amber:#F59E0B;  --amber-bg:#FFF0CC;
+  --ok:#16A34A; --ok-bg:#DCFCE7; --ko:#E11D48; --ko-bg:#FFE4E9;
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:#DAD7F5;line-height:1.4}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif}
+
+/* Contenedor móvil (en escritorio se ve como columna centrada) */
+#app{max-width:480px;min-height:100%;margin:0 auto;background:var(--bg);position:relative;overflow-x:hidden;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.screen{display:none;min-height:100vh;padding:0 18px 28px;animation:in .22s ease-out}
+.screen.active{display:block}
+@keyframes in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+
+/* Barra superior */
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 0 12px;
+  margin:0 -18px 14px;padding-left:18px;padding-right:18px;background:rgba(245,244,255,.92);backdrop-filter:blur(8px)}
+.back{width:42px;height:42px;border-radius:14px;background:var(--card);box-shadow:0 2px 0 var(--line);font-size:20px;font-weight:800;display:grid;place-items:center;color:var(--indigo)}
+.top h2{font-size:21px;font-weight:800;flex:1}
+.top.tint-coral .back{color:var(--coral)} .top.tint-teal .back{color:var(--teal)}
+.top.tint-violet .back{color:var(--violet)} .top.tint-amber .back{color:var(--amber)}
+
+/* Botones */
+.btn{display:block;width:100%;padding:15px 18px;border-radius:16px;font-weight:800;font-size:16px;text-align:center;transition:transform .08s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:linear-gradient(135deg,var(--indigo),var(--indigo-2));color:#fff;box-shadow:0 5px 0 #2E2790}
+.btn-primary:active{box-shadow:0 2px 0 #2E2790;transform:translateY(3px)}
+.btn-ghost{background:var(--card);color:var(--indigo);box-shadow:inset 0 0 0 2px var(--line)}
+.stack{display:grid;gap:12px;margin-top:18px}
+.label{font-size:13px;font-weight:800;color:var(--ink-soft);margin:20px 0 8px;letter-spacing:.02em}
+
+/* ---------- INICIO ---------- */
+.hero{padding:calc(22px + env(safe-area-inset-top,0px)) 0 4px;text-align:center}
+.logo{font-family:'Fraunces',serif;font-weight:800;font-size:34px;letter-spacing:-.01em;
+  background:linear-gradient(90deg,var(--indigo),var(--violet) 45%,var(--coral));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tagline{color:var(--ink-soft);font-weight:600;margin-top:2px}
+.streak-card{margin-top:16px;display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border-radius:var(--radius);
+  background:linear-gradient(120deg,#FF7A45,#F43F5E 60%,#C026D3);color:#fff;box-shadow:0 8px 20px -8px rgba(244,63,94,.7)}
+.streak-badge{position:relative;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;
+  font-family:'Fraunces',serif;font-size:28px;font-weight:800}
+.streak-badge b{position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--coral);
+  font:800 14px 'Nunito';display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.streak-card strong{display:block;font-size:17px}
+.streak-card small{opacity:.92;font-weight:600}
+.streak-card .chev{margin-left:auto;font-size:26px;font-weight:800}
+
+/* Banner con imagen */
+.banner{margin-top:16px;height:176px;border-radius:var(--radius);overflow:hidden;position:relative;
+  background:linear-gradient(135deg,#4338CA,#7C3AED 55%,#F43F5E);box-shadow:0 10px 24px -12px rgba(67,56,202,.8)}
+.banner img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Menú principal */
+.menu{display:grid;gap:12px}
+.menu-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius);text-align:left;color:#fff;font-weight:800;font-size:18px;transition:transform .08s}
+.menu-item:active{transform:scale(.98)}
+.menu-item .ic{width:48px;height:48px;border-radius:15px;background:rgba(255,255,255,.24);display:grid;place-items:center;font-size:26px}
+.menu-item small{display:block;font-size:13px;font-weight:600;opacity:.92}
+.menu-item .chev{margin-left:auto;font-size:24px}
+.m-coral{background:linear-gradient(120deg,#FB7185,#E11D48);box-shadow:0 5px 0 #A3122F}
+.m-teal{background:linear-gradient(120deg,#2DD4BF,#0D9488);box-shadow:0 5px 0 #086C63}
+.m-violet{background:linear-gradient(120deg,#A78BFA,#6D28D9);box-shadow:0 5px 0 #4C1D95}
+.m-amber{background:linear-gradient(120deg,#FBBF24,#EA7B0C);box-shadow:0 5px 0 #A85205}
+
+/* ---------- TARJETAS DE LISTA ---------- */
+.card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:var(--radius);background:var(--card);
+  box-shadow:0 2px 0 var(--line),0 8px 18px -14px rgba(30,27,75,.5);margin-bottom:12px}
+.card:active{transform:scale(.99)}
+.avatar{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-weight:800}
+.card .body{flex:1;min-width:0}
+.card .body strong{display:block;font-size:15.5px}
+.card .body span{font-size:13px;color:var(--ink-soft);font-weight:600}
+.pill{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:800;display:inline-block}
+.sq{width:44px;height:44px;border-radius:13px;flex:none;display:grid;place-items:center;font-size:22px}
+.check{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;border:2.5px solid var(--line);color:transparent}
+.check.on{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* Barras de progreso */
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden;margin:7px 0 3px}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--c1,#7C3AED),var(--c2,#C084FC))}
+.num{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font:800 20px 'Fraunces',serif}
+
+/* Botón pequeño "Iniciar" */
+.mini{padding:9px 16px;border-radius:12px;font-weight:800;font-size:14px;background:var(--amber);color:#fff;box-shadow:0 3px 0 #B97405}
+.mini:active{transform:translateY(2px);box-shadow:0 1px 0 #B97405}
+
+/* ---------- DETALLES ---------- */
+.panel{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 2px 0 var(--line);margin-bottom:12px}
+.panel p{color:var(--ink-soft);font-weight:600;font-size:14.5px}
+.replies .card{align-items:flex-start}
+.reply-box{display:flex;gap:10px;margin-top:6px}
+.reply-box input{flex:1;min-width:0;padding:13px 14px;border-radius:14px;border:2px solid var(--line);font:inherit;background:#fff;color:var(--ink)}
+.reply-box input:focus,textarea:focus{outline:3px solid #C7C3FF;border-color:var(--indigo-2)}
+.reply-box button{padding:0 18px;border-radius:14px;background:var(--coral);color:#fff;font-weight:800;box-shadow:0 3px 0 #B91C3C}
+textarea{width:100%;min-height:110px;padding:13px;border-radius:14px;border:2px solid var(--line);font:inherit;resize:vertical;background:#fff;color:var(--ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.file{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:var(--teal-bg);font-weight:700;font-size:14px;color:#0B5F58}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--card);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:0 2px 0 var(--line)}
+.stat b{display:block;font:800 26px 'Fraunces',serif;color:var(--amber)}
+.stat span{font-size:12.5px;color:var(--ink-soft);font-weight:700}
+.lesson{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:16px;background:var(--card);margin-bottom:10px;box-shadow:0 2px 0 var(--line);font-weight:700}
+.lesson .dot{width:26px;height:26px;border-radius:50%;border:2.5px solid var(--line);display:grid;place-items:center;font-size:14px;color:transparent;flex:none}
+.lesson.done .dot{background:var(--violet);border-color:var(--violet);color:#fff}
+.lesson em{margin-left:auto;font-style:normal;font-size:13px;color:var(--ink-soft)}
+
+/* ---------- RACHA (camino) ---------- */
+.path-head{text-align:center;font-weight:800;color:var(--coral);margin-bottom:6px}
+.path{position:relative;margin:6px 0 18px}
+.path svg{position:absolute;inset:0;width:100%;height:100%}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;width:130px;text-align:center;font-size:13px;font-weight:800}
+.node .b{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff;
+  background:linear-gradient(140deg,#34D399,#059669);box-shadow:0 5px 0 #047857}
+.node.today .b{width:70px;height:70px;font-family:'Fraunces',serif;font-size:34px;background:linear-gradient(140deg,#FF8A5B,#F43F5E);box-shadow:0 6px 0 #B91C3C,0 0 0 8px rgba(244,63,94,.18);animation:pulse 1.8s infinite}
+.node.today .b:active{transform:translateY(3px)}
+.node.lock .b{background:#E4E2F7;color:#9C99C4;box-shadow:0 5px 0 #CFCCEB;font-size:22px}
+.node.lock{color:#9C99C4}
+.tag-hoy{background:var(--ink);color:#fff;padding:2px 10px;border-radius:99px;font-size:11.5px}
+@keyframes pulse{50%{box-shadow:0 6px 0 #B91C3C,0 0 0 14px rgba(244,63,94,.08)}}
+
+/* ---------- EJERCICIOS ---------- */
+.progress{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:18px}
+.progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#34D399,#06B6D4,#6366F1);transition:width .4s}
+.kicker{font-weight:800;color:var(--violet);font-size:14px}
+.formula{margin:8px 0 6px;padding:22px 10px;border-radius:var(--radius);background:linear-gradient(135deg,#fff,#F0EDFF);text-align:center;
+  box-shadow:0 2px 0 var(--line);font-size:1.45em;overflow-x:auto}
+.formula.sm{font-size:1.15em;padding:16px 10px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px;margin-bottom:12px;border-radius:16px;background:var(--card);
+  text-align:left;box-shadow:0 4px 0 var(--line),inset 0 0 0 2px var(--line);transition:transform .08s}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line),inset 0 0 0 2px var(--line)}
+.opt .l{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;color:#fff}
+.opt:nth-child(1) .l{background:#6366F1}.opt:nth-child(2) .l{background:#0D9488}.opt:nth-child(3) .l{background:#F59E0B}.opt:nth-child(4) .l{background:#F43F5E}
+.opt .t{overflow-x:auto;padding:4px 0}
+
+/* ---------- RESULTADO ---------- */
+.res{text-align:center}
+.res .icon{width:104px;height:104px;margin:22px auto 10px;border-radius:50%;display:grid;place-items:center;font-size:54px;font-weight:800;color:#fff}
+.res.ok .icon{background:linear-gradient(140deg,#4ADE80,#16A34A);box-shadow:0 7px 0 #0F7A35}
+.res.ko .icon{background:linear-gradient(140deg,#FB7185,#E11D48);box-shadow:0 7px 0 #A3122F}
+.res h3{font-size:28px;font-weight:800}
+.res.ok h3{color:var(--ok)} .res.ko h3{color:var(--ko)}
+.explain{margin:16px 0 4px;padding:14px;border-radius:var(--radius);text-align:center;font-weight:700;display:grid;gap:8px}
+.res.ok .explain{background:var(--ok-bg)} .res.ko .explain{background:var(--ko-bg)}
+.explain small{color:var(--ink-soft);font-weight:800}
+
+/* ---------- RESUMEN ---------- */
+.done-wrap{text-align:center;padding-top:40px}
+.trophy{font-size:92px;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.2) rotate(-20deg);opacity:0}}
+.done-wrap h3{font-size:30px;margin-top:6px}
+.done-wrap p{color:var(--ink-soft);font-weight:700;margin-top:6px}
+.score{display:inline-block;margin-top:14px;padding:8px 18px;border-radius:99px;background:var(--amber-bg);color:#92580A;font-weight:800}
+
+/* Aviso (toast) */
+#toast{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;pointer-events:none;
+  background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:700;font-size:14.5px;max-width:88%;text-align:center;transition:.25s;z-index:20}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+:focus-visible{outline:3px solid var(--indigo-2);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ================= 1 · INICIO ================= -->
+<section class="screen" id="home">
+  <header class="hero">
+    <h1 class="logo">∫NTEGRALAB</h1>
+    <p class="tagline">Aprende cálculo integral desde tu celular</p>
+  </header>
+
+  <!-- Racha → Camino de racha -->
+  <button class="streak-card" data-go="racha">
+    <span class="streak-badge">∫<b>5</b></span>
+    <span><strong>Racha de aprendizaje</strong><small>5 días consecutivos · Toca para ver tu camino</small></span>
+    <span class="chev">›</span>
+  </button>
+
+  <!-- BANNER: reemplaza el nombre del archivo en el atributo src -->
+  <div class="banner">
+    <!-- ===== CAMBIA AQUÍ EL NOMBRE DE TU IMAGEN (misma carpeta que este HTML) ===== -->
+    <img src="Banner.png" alt="Banner de IntegraLab" onerror="this.style.display='none'">
+    <!-- ============================================================================= -->
+  </div>
+
+  <p class="label">MENÚ PRINCIPAL</p>
+  <nav class="menu">
+    <button class="menu-item m-coral"  data-go="foro"><span class="ic">💬</span><span>Foro<small>Resuelve dudas con tus compañeros</small></span><span class="chev">›</span></button>
+    <button class="menu-item m-teal"   data-go="actividades"><span class="ic">📝</span><span>Actividades<small>Entregas y tareas</small></span><span class="chev">›</span></button>
+    <button class="menu-item m-violet" data-go="unidades"><span class="ic">📚</span><span>Unidades Didácticas<small>Tu ruta de contenidos</small></span><span class="chev">›</span></button>
+    <button class="menu-item m-amber"  data-go="tests"><span class="ic">🧪</span><span>Test Evaluativos<small>Mide lo que has aprendido</small></span><span class="chev">›</span></button>
+  </nav>
+</section>
+
+<!-- ================= 2 · FORO ================= -->
+<section class="screen" id="foro">
+  <div class="top tint-coral"><button class="back" data-go="home" aria-label="Volver">←</button><h2>Foro</h2></div>
+  <div id="foro-list"></div>
+  <button class="btn btn-ghost" data-go="home">Volver al inicio</button>
+</section>
+
+<!-- ================= 6 · DETALLE DEL HILO ================= -->
+<section class="screen" id="hilo">
+  <div class="top tint-coral"><button class="back" data-go="foro" aria-label="Volver">←</button><h2>Detalle del hilo</h2></div>
+  <div class="panel">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+      <span class="avatar" style="background:#F43F5E">L</span>
+      <div><strong>¿Cómo elijo bien la u en una sustitución?</strong><br><span style="font-size:13px;color:var(--ink-soft);font-weight:600">Laura · hace 2 h</span></div>
+    </div>
+    <p>Siempre dudo entre tomar la expresión del paréntesis o la del exponente. ¿Hay alguna regla práctica para decidir?</p>
+  </div>
+  <p class="label" id="reply-count">3 RESPUESTAS</p>
+  <div class="replies" id="replies">
+    <div class="card"><span class="avatar" style="background:#6366F1">M</span><div class="body"><strong>Mateo</strong><span>Busca la función cuya derivada aparece multiplicando en el integrando.</span></div></div>
+    <div class="card"><span class="avatar" style="background:#0D9488">S</span><div class="body"><strong>Sofía</strong><span>Si ves una expresión “dentro” de otra (como x²+1 dentro de una potencia), suele ser buena candidata a u.</span></div></div>
+    <div class="card"><span class="avatar" style="background:#F59E0B">D</span><div class="body"><strong>Prof. Daniel</strong><span>Practica con los ejercicios del camino de racha: ahí se ve el patrón.</span></div></div>
+  </div>
+  <div class="reply-box">
+    <input id="reply-input" type="text" placeholder="Escribe una respuesta..." aria-label="Escribe una respuesta">
+    <button id="reply-send">Responder</button>
+  </div>
+  <div class="stack"><button class="btn btn-ghost" data-go="foro">Volver al foro</button></div>
+</section>
+
+<!-- ================= 3 · ACTIVIDADES ================= -->
+<section class="screen" id="actividades">
+  <div class="top tint-teal"><button class="back" data-go="home" aria-label="Volver">←</button><h2>Actividades</h2></div>
+  <div id="act-list"></div>
+  <button class="btn btn-ghost" data-go="home">Volver al inicio</button>
+</section>
+
+<!-- ================= 7 · DETALLE DE ACTIVIDAD ================= -->
+<section class="screen" id="actividad">
+  <div class="top tint-teal"><button class="back" data-go="actividades" aria-label="Volver">←</button><h2>Detalle de actividad</h2></div>
+  <h3 id="act-title" style="font-size:22px"></h3>
+  <div class="chips" style="margin-top:10px">
+    <span class="pill" style="background:var(--amber-bg);color:#92580A" id="act-date"></span>
+    <span class="pill" id="act-status"></span>
+  </div>
+  <p class="label">INSTRUCCIONES</p>
+  <div class="panel"><p>Resuelve los ejercicios de la guía aplicando el método indicado. Justifica cada paso y verifica tu resultado derivando.</p></div>
+  <div class="file">📄 Guía_metodos_integracion.pdf</div>
+  <p class="label">TU RESPUESTA</p>
+  <textarea id="act-answer" placeholder="Escribe aquí tu desarrollo..."></textarea>
+  <div class="stack">
+    <button class="btn btn-primary" id="act-send">Enviar actividad</button>
+    <button class="btn btn-ghost" data-go="actividades">Volver a actividades</button>
+  </div>
+</section>
+
+<!-- ================= 4 · UNIDADES ================= -->
+<section class="screen" id="unidades">
+  <div class="top tint-violet"><button class="back" data-go="home" aria-label="Volver">←</button><h2>Unidades Didácticas</h2></div>
+  <div id="uni-list"></div>
+  <button class="btn btn-ghost" data-go="home">Volver al inicio</button>
+</section>
+
+<!-- ================= 8 · DETALLE DE UNIDAD ================= -->
+<section class="screen" id="unidad">
+  <div class="top tint-violet"><button class="back" data-go="unidades" aria-label="Volver">←</button><h2>Detalle de unidad</h2></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="num" id="uni-num" style="background:var(--violet)"></span>
+    <h3 id="uni-title" style="font-size:21px"></h3>
+  </div>
+  <div class="bar" style="--c1:#7C3AED;--c2:#C084FC;margin-top:14px"><i id="uni-bar"></i></div>
+  <small id="uni-pct" style="font-weight:700;color:var(--ink-soft)"></small>
+  <p class="label">CONTENIDO DE LA UNIDAD</p>
+  <div id="uni-lessons"></div>
+  <div class="stack">
+    <button class="btn btn-primary" id="uni-continue">Continuar unidad</button>
+    <button class="btn btn-ghost" data-go="unidades">Volver a unidades</button>
+  </div>
+</section>
+
+<!-- ================= 5 · TESTS ================= -->
+<section class="screen" id="tests">
+  <div class="top tint-amber"><button class="back" data-go="home" aria-label="Volver">←</button><h2>Test Evaluativos</h2></div>
+  <div id="test-list"></div>
+  <button class="btn btn-ghost" data-go="home">Volver al inicio</button>
+</section>
+
+<!-- ================= 9 · DETALLE DEL TEST ================= -->
+<section class="screen" id="test">
+  <div class="top tint-amber"><button class="back" data-go="tests" aria-label="Volver">←</button><h2>Detalle del test</h2></div>
+  <h3 id="test-title" style="font-size:24px;margin-bottom:14px"></h3>
+  <div class="stats">
+    <div class="stat"><b id="t-q"></b><span>Preguntas</span></div>
+    <div class="stat"><b id="t-d"></b><span>Duración</span></div>
+    <div class="stat"><b>2</b><span>Intentos</span></div>
+  </div>
+  <p class="label">INSTRUCCIONES</p>
+  <div class="panel"><p>Responde con calma: puedes revisar tus respuestas antes de enviar. El cronómetro inicia al comenzar y tendrás 2 intentos disponibles.</p></div>
+  <div class="stack">
+    <button class="btn btn-primary" id="test-start">Comenzar test</button>
+    <button class="btn btn-ghost" data-go="tests">Volver a tests</button>
+  </div>
+</section>
+
+<!-- ================= 10 · CAMINO DE RACHA ================= -->
+<section class="screen" id="racha">
+  <div class="top tint-coral"><button class="back" data-go="home" aria-label="Volver">←</button><h2>Camino de racha</h2></div>
+  <p class="path-head">🔥 5 días consecutivos de práctica</p>
+  <div class="path" id="path"></div>
+  <button class="btn btn-ghost" data-go="home">Volver al inicio</button>
+</section>
+
+<!-- ============ 11–25 · EJERCICIOS Y RESULTADOS (se generan con JS) ============ -->
+<section class="screen" id="ejercicio"></section>
+<section class="screen" id="resultado"></section>
+
+<!-- ================= 26 · SESIÓN COMPLETADA ================= -->
+<section class="screen" id="resumen">
+  <div class="top tint-coral"><button class="back" data-go="racha" aria-label="Volver">←</button><h2>¡Sesión completada!</h2></div>
+  <div class="done-wrap">
+    <div class="trophy">🏆</div>
+    <h3>Completaste 5 ejercicios de sustitución</h3>
+    <p>Sigue así para mantener tu racha activa</p>
+    <span class="score" id="score"></span>
+  </div>
+  <div class="stack" style="margin-top:34px"><button class="btn btn-primary" data-go="racha">Volver al camino de racha</button></div>
+</section>
+
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================
+   DATOS
+   ========================================================= */
+const THREADS = [
+  {t:'¿Cómo elijo bien la u en una sustitución?', n:18, c:'#F43F5E', i:'L'},
+  {t:'Duda con la constante C en integrales definidas', n:7, c:'#6366F1', i:'M'},
+  {t:'Truco para integrar por partes (LIATE)', n:23, c:'#0D9488', i:'S'},
+  {t:'¿Cuándo uso fracciones parciales?', n:3, c:'#F59E0B', i:'D'}
+];
+const ACTS = [
+  {t:'Actividad 1 · Antiderivadas', d:'28 sep', s:'Entregada', done:true, e:'∫'},
+  {t:'Actividad 2 · Integral definida', d:'5 oct', s:'Entregada', done:true, e:'📐'},
+  {t:'Actividad 3 · Métodos de integración', d:'12 oct', s:'Pendiente', done:false, e:'🧩'},
+  {t:'Actividad 4 · Aplicaciones', d:'26 oct', s:'Pendiente', done:false, e:'📈'}
+];
+const UNITS = [
+  {t:'Unidad 1 · Antiderivadas', p:100, c:['#16A34A','#4ADE80'], l:[['Concepto de antiderivada',10],['Reglas básicas',14],['Integral indefinida',12],['Problemas guiados',9]], d:4},
+  {t:'Unidad 2 · Integral definida', p:75, c:['#0D9488','#2DD4BF'], l:[['Sumas de Riemann',13],['Teorema fundamental',16],['Propiedades',11],['Área bajo la curva',12]], d:3},
+  {t:'Unidad 3 · Métodos de integración', p:30, c:['#7C3AED','#C084FC'], l:[['Sustitución',12],['Por partes',15],['Sustitución trigonométrica',18],['Fracciones parciales',10]], d:2},
+  {t:'Unidad 4 · Aplicaciones', p:0, c:['#F59E0B','#FBBF24'], l:[['Áreas entre curvas',14],['Volúmenes de revolución',17],['Longitud de arco',15],['Aplicaciones físicas',12]], d:0}
+];
+const UCOLORS = ['#16A34A','#0D9488','#7C3AED','#F59E0B'];
+const TESTS = [
+  {t:'Test · Unidad 1', q:10, m:15}, {t:'Test · Unidad 2', q:10, m:15},
+  {t:'Test · Unidad 3', q:12, m:20}, {t:'Test final', q:20, m:40}
+];
+const PATH = [
+  {t:'Antiderivadas', s:'done'}, {t:'Sustitución', s:'done'}, {t:'Por partes', s:'done'},
+  {t:'Sustitución trigonométrica', s:'done'}, {t:'Fracciones parciales', s:'done'},
+  {t:'Repaso general', s:'today'}, {t:'Aplicaciones', s:'lock'}
+];
+/* ok = índice (0=A … 3=D) de la opción correcta, igual que en los hipervínculos del wireframe */
+const EX = [
+  {f:'\\int 2x\\,(x^2+1)^3\\,dx',
+   o:['\\dfrac{(x^2+1)^4}{4}+C','(x^2+1)^4+C','4(x^2+1)^4+C','\\dfrac{(x^2+1)^3}{3}+C'], ok:0,
+   sub:'u = x^2+1 \\;\\Rightarrow\\; du = 2x\\,dx'},
+  {f:'\\int 3x^2e^{x^3}\\,dx',
+   o:['3e^{x^3}+C','e^{x^3}+C','\\dfrac{e^{x^3}}{3}+C','x^3e^{x^3}+C'], ok:1,
+   sub:'u = x^3 \\;\\Rightarrow\\; du = 3x^2\\,dx'},
+  {f:'\\int \\dfrac{x}{x^2+4}\\,dx',
+   o:['\\ln|x^2+4|+C','\\dfrac{\\ln|x|}{2}+C','\\dfrac{\\ln|x^2+4|}{2}+C','\\ln|x|+C'], ok:2,
+   sub:'u = x^2+4 \\;\\Rightarrow\\; du = 2x\\,dx'},
+  {f:'\\int \\sin(x)\\cos^5(x)\\,dx',
+   o:['\\dfrac{\\cos^6(x)}{6}+C','-\\dfrac{\\sin^6(x)}{6}+C','-\\dfrac{\\cos^4(x)}{4}+C','-\\dfrac{\\cos^6(x)}{6}+C'], ok:3,
+   sub:'u = \\cos x \\;\\Rightarrow\\; du = -\\sin x\\,dx'},
+  {f:'\\int 4x^3(x^4+5)^2\\,dx',
+   o:['\\dfrac{(x^4+5)^3}{3}+C','(x^4+5)^3+C','3(x^4+5)^3+C','\\dfrac{(x^4+5)^3}{2}+C'], ok:0,
+   sub:'u = x^4+5 \\;\\Rightarrow\\; du = 4x^3\\,dx'}
+];
+const LET = ['A','B','C','D'];
+const answers = {};            // respuestas del usuario por ejercicio
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const tex = (s, display=false) => {
+  try { return katex.renderToString(s, {throwOnError:false, displayMode:display}); }
+  catch(e){ return s; }
+};
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* =========================================================
+   RENDER DE LISTAS
+   ========================================================= */
+// Foro → cada hilo lleva al detalle del hilo
+$('#foro-list').innerHTML = THREADS.map(h => `
+  <button class="card" data-go="hilo">
+    <span class="avatar" style="background:${h.c}">${h.i}</span>
+    <span class="body"><strong>${h.t}</strong><span>${h.n} respuestas</span></span>
+  </button>`).join('');
+
+// Actividades → cada una lleva al detalle de actividad
+$('#act-list').innerHTML = ACTS.map((a,i) => `
+  <button class="card" data-go="actividad/${i}">
+    <span class="sq" style="background:var(--teal-bg)">${a.e}</span>
+    <span class="body"><strong>${a.t}</strong><span>Fecha límite: ${a.d}</span></span>
+    <span class="check ${a.done?'on':''}">✓</span>
+  </button>`).join('');
+
+// Unidades → cada una lleva al detalle de unidad
+$('#uni-list').innerHTML = UNITS.map((u,i) => `
+  <button class="card" data-go="unidad/${i}">
+    <span class="num" style="background:${UCOLORS[i]}">${i+1}</span>
+    <span class="body"><strong>${u.t}</strong>
+      <span class="bar" style="display:block;--c1:${u.c[0]};--c2:${u.c[1]}"><i style="width:${u.p}%"></i></span>
+      <span>${u.p}% completado</span></span>
+  </button>`).join('');
+
+// Tests → botón "Iniciar" (y la tarjeta) lleva al detalle del test
+$('#test-list').innerHTML = TESTS.map((t,i) => `
+  <div class="card" data-go="test/${i}" style="cursor:pointer">
+    <span class="sq" style="background:var(--amber-bg)">🧪</span>
+    <span class="body"><strong>${t.t}</strong><span>${t.q} preguntas · ${t.m} min</span></span>
+    <button class="mini" data-go="test/${i}">Iniciar</button>
+  </div>`).join('');
+
+// Camino de racha (zigzag con curva SVG)
+(function buildPath(){
+  const ROW = 104, PAD = 56, W = 100;
+  const xs = [68,30,66,30,66,34,62];
+  const H = PAD*2 + ROW*(PATH.length-1);
+  const pts = PATH.map((n,i)=>({x:xs[i], y:PAD + ROW*i}));
+  let d = `M ${pts[0].x} ${pts[0].y}`;
+  for(let i=1;i<pts.length;i++){
+    const a=pts[i-1], b=pts[i], my=(a.y+b.y)/2;
+    d += ` C ${a.x} ${my}, ${b.x} ${my}, ${b.x} ${b.y}`;
+  }
+  const el = $('#path'); el.style.height = H+'px';
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+      <path d="${d}" fill="none" stroke="#C9C5F0" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 14" vector-effect="non-scaling-stroke"/></svg>` +
+    PATH.map((n,i)=>{
+      const sym = n.s==='done' ? '✓' : n.s==='today' ? '∫' : '🔒';
+      const tag = n.s==='today' ? '<span class="tag-hoy">HOY</span>' : '';
+      const inner = n.t==='Sustitución'
+        ? `<button class="b" data-go="ej/1" aria-label="Comenzar ejercicios de sustitución">${sym}</button>`
+        : `<span class="b">${sym}</span>${tag}`;
+      return `<div class="node ${n.s}" style="left:${pts[i].x}%;top:${pts[i].y}px"><div style="display:contents">${inner}</div><span>${n.t}</span></div>`;
+    }).join('');
+})();
+
+/* =========================================================
+   PANTALLAS DINÁMICAS
+   ========================================================= */
+function showActivity(i){
+  const a = ACTS[i] || ACTS[2];
+  $('#act-title').textContent = a.t;
+  $('#act-date').textContent = 'Fecha límite: ' + a.d;
+  const st = $('#act-status');
+  st.textContent = 'Estado: ' + a.s;
+  st.style.background = a.done ? 'var(--ok-bg)' : 'var(--coral-bg)';
+  st.style.color = a.done ? '#166534' : '#B91C3C';
+  $('#act-send').dataset.i = i;
+}
+function showUnit(i){
+  const u = UNITS[i] || UNITS[2];
+  $('#uni-num').textContent = (+i)+1;
+  $('#uni-num').style.background = UCOLORS[i];
+  $('#uni-title').textContent = u.t;
+  const bar = $('#uni-bar'); bar.style.width = u.p+'%';
+  bar.parentElement.style.setProperty('--c1',u.c[0]); bar.parentElement.style.setProperty('--c2',u.c[1]);
+  $('#uni-pct').textContent = u.p + '% completado';
+  $('#uni-lessons').innerHTML = u.l.map((l,k)=>
+    `<div class="lesson ${k<u.d?'done':''}"><span class="dot">✓</span>${l[0]}<em>${l[1]} min</em></div>`).join('');
+}
+function showTest(i){
+  const t = TESTS[i] || TESTS[2];
+  $('#test-title').textContent = t.t;
+  $('#t-q').textContent = t.q; $('#t-d').textContent = t.m + ' min';
+}
+function showExercise(n){
+  const e = EX[n-1]; if(!e) return go('racha');
+  $('#ejercicio').innerHTML = `
+    <div class="top tint-coral"><button class="back" data-go="racha" aria-label="Volver al camino de racha">←</button><h2>Ejercicio ${n} de 5</h2></div>
+    <div class="progress"><i style="width:${(n-1)/5*100}%"></i></div>
+    <p class="kicker">Integral por sustitución</p>
+    <div class="formula">${tex(e.f,true)}</div>
+    <p class="label">Selecciona la respuesta correcta:</p>
+    <div>${e.o.map((o,k)=>`
+      <button class="opt" data-go="res/${n}/${k}"><span class="l">${LET[k]}</span><span class="t">${tex(o)}</span></button>`).join('')}</div>`;
+}
+function showResult(n, pick){
+  const e = EX[n-1]; if(!e) return go('racha');
+  const ok = (+pick) === e.ok;
+  answers[n] = ok;
+  const next = n < 5 ? `ej/${n+1}` : 'resumen';
+  $('#resultado').innerHTML = `
+    <div class="top tint-coral"><button class="back" data-go="ej/${n}" aria-label="Volver al ejercicio">←</button><h2>Resultado</h2></div>
+    <div class="res ${ok?'ok':'ko'}">
+      <div class="formula sm">${tex(e.f)}</div>
+      <div class="icon">${ok?'✓':'✕'}</div>
+      <h3>${ok?'¡Correcto!':'Incorrecto'}</h3>
+      <div class="explain">
+        ${ok?'':`<div><small>Respuesta correcta</small><br>${tex(e.o[e.ok])}</div>`}
+        <div><small>Sustituye</small><br>${tex(e.sub)}</div>
+      </div>
+      <div class="stack"><button class="btn btn-primary" data-go="${next}">${n<5?'Continuar':'Ver resumen'}</button></div>
+    </div>`;
+}
+function showSummary(){
+  const c = Object.values(answers).filter(Boolean).length;
+  $('#score').textContent = Object.keys(answers).length ? `${c} de 5 respuestas correctas` : '¡Buen trabajo!';
+}
+
+/* =========================================================
+   ENRUTADOR (la lógica de hipervínculos del wireframe)
+   ========================================================= */
+function go(route){ location.hash = '#' + route; }
+
+function render(){
+  const [name, a, b] = (location.hash.slice(1) || 'home').split('/');
+  let screen = name;
+  switch(name){
+    case 'actividad': showActivity(a); break;
+    case 'unidad':    showUnit(a); break;
+    case 'test':      showTest(a); break;
+    case 'ej':        showExercise(+a); screen='ejercicio'; break;
+    case 'res':       showResult(+a, b); screen='resultado'; break;
+    case 'resumen':   showSummary(); break;
+  }
+  const target = document.getElementById(screen) || document.getElementById('home');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s===target));
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', render);
+
+// Un solo manejador para todo elemento con data-go
+document.addEventListener('click', ev=>{
+  const el = ev.target.closest('[data-go]');
+  if(!el) return;
+  ev.stopPropagation();
+  go(el.dataset.go);
+});
+
+/* Acciones que, igual que en el wireframe, no cambian de pantalla */
+$('#act-send').addEventListener('click', e=>{
+  const i = +e.currentTarget.dataset.i || 0;
+  const st = $('#act-status');
+  st.textContent = 'Estado: Enviada'; st.style.background='var(--ok-bg)'; st.style.color='#166534';
+  ACTS[i].done = true; ACTS[i].s = 'Enviada';
+  $('#act-list').querySelectorAll('.check')[i].classList.add('on');
+  toast('¡Actividad enviada!');
+});
+$('#uni-continue').addEventListener('click', ()=>toast('Retomando tu unidad…'));
+$('#test-start').addEventListener('click', ()=>toast('¡Test iniciado! Mucha suerte'));
+
+$('#reply-send').addEventListener('click', ()=>{
+  const inp = $('#reply-input'), v = inp.value.trim();
+  if(!v){ toast('Escribe tu respuesta primero'); return; }
+  const box = $('#replies');
+  const d = document.createElement('div'); d.className='card';
+  d.innerHTML = `<span class="avatar" style="background:#7C3AED">Tú</span><div class="body"><strong>Tú</strong><span></span></div>`;
+  d.querySelector('span:not(.avatar)').textContent = v;
+  box.appendChild(d); inp.value='';
+  $('#reply-count').textContent = box.children.length + ' RESPUESTAS';
+});
+
+render();
+</script>
+</body>
+</html>
