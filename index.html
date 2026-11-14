@@ -898,7 +898,7 @@ const VIEWS={
     return `<header class="hero"><div class="hero-top"><span class="logo">∫NTEGRALAB</span><button class="link" data-act="logout">Salir</button></div>
       <p class="hello">Hola, <b>${esc(S.profile.name)}</b> ${chip(ROLE[role()],'pu')}</p></header>
       <button class="streak" data-go="racha/${firstUnit()}"><span class="n">${st}</span><span><b>${st===1?'día':'días'} de racha</b><small>${done} de ${allTotal()} lecciones · toca para continuar</small></span></button>
-      <div class="banner"><img src="${BANNER_IMAGE}" alt="Banner de IntegraLab" onerror="this.style.display='none'"></div>
+      <div class="banner"><img src="${Banner.png}" alt="Banner de IntegraLab" onerror="this.style.display='none'"></div>
       <p class="label">Menú principal</p>
       <nav class="menu">
         ${mi('foro','red','F','Foro','Resuelve dudas con tus compañeros',b('threads'))}
