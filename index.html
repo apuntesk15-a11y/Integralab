@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2B3A8C">
+<title>∫ntegraLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root{
+  --ink:#1B2A49; --soft:#56627F; --bg:#F1F4FA; --card:#fff; --line:#D5DBEA;
+  --primary:#2B3A8C; --red:#D64550; --blue:#2D6CDF; --amber:#E5A00D; --green:#2E9E5B; --purple:#6D4AC2; --teal:#0E9F8E;
+  --ok:#E3F4EA; --okd:#1E7A44; --ko:#FBE6E8; --kod:#A12A35; --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:#DDE2EF;line-height:1.4}
+button,input,textarea,select{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif}
+a{color:var(--primary);font-weight:700}
+.hidden{display:none!important}
+.center{text-align:center;padding:40px 0;color:var(--soft);font-weight:700}
+
+#app{max-width:520px;min-height:100vh;margin:0 auto;background:var(--bg);padding:0 18px calc(28px + env(safe-area-inset-bottom,0px))}
+#app.wide{max-width:940px}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;margin:0 -18px 16px;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 12px;background:var(--bg);border-bottom:2px solid var(--line)}
+.top h2{flex:1;font-size:21px;font-weight:800;line-height:1.2}
+.back{width:42px;height:42px;flex:none;border-radius:var(--r);background:var(--card);border:2px solid var(--line);font-size:20px;font-weight:800;color:var(--primary)}
+
+/* botones */
+.btn{display:block;width:100%;padding:14px 18px;border-radius:var(--r);font-weight:800;font-size:16px;text-align:center;border-bottom:4px solid transparent}
+.btn:active{transform:translateY(2px)}
+.btn-primary{background:var(--primary);color:#fff;border-bottom-color:#1B2766}
+.btn-green{background:var(--green);color:#fff;border-bottom-color:#1E7A44}
+.btn-red{background:var(--red);color:#fff;border-bottom-color:#A12A35}
+.btn-ghost{background:var(--card);color:var(--primary);border:2px solid var(--line)}
+.btn-sm{display:inline-block;width:auto;padding:8px 14px;font-size:14px}
+.stack{display:grid;gap:12px;margin-top:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.link{color:var(--primary);font-weight:800;font-size:14px;text-decoration:underline}
+.label{font-size:12.5px;font-weight:800;color:var(--soft);letter-spacing:.06em;text-transform:uppercase;margin:20px 0 8px}
+
+/* chips */
+.chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:800;background:#E4E8F5;color:var(--primary)}
+.chip.ok{background:var(--ok);color:var(--okd)} .chip.ko{background:var(--ko);color:var(--kod)}
+.chip.am{background:#FBEFD0;color:#8A5C00} .chip.pu{background:#ECE5F8;color:#51359A}
+.badge{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;font-size:12px;font-weight:800;padding:2px 9px}
+
+/* inicio */
+.hero{padding:calc(20px + env(safe-area-inset-top,0px)) 0 4px}
+.hero-top{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Fraunces',serif;font-weight:800;font-size:30px;color:var(--primary)}
+.hello{margin-top:6px;color:var(--soft);font-weight:700}
+.banner{margin-top:14px;height:170px;border-radius:var(--r);overflow:hidden;background:var(--primary)}
+.banner img{width:100%;height:100%;object-fit:cover;display:block}
+.streak{display:flex;align-items:center;gap:14px;width:100%;margin-top:14px;padding:14px 16px;border-radius:var(--r);background:var(--red);color:#fff;text-align:left;border-bottom:4px solid #A12A35}
+.streak .n{font:800 34px 'Fraunces',serif;line-height:1;min-width:46px;text-align:center}
+.streak small{display:block;opacity:.92;font-weight:700}
+.menu{display:grid;gap:10px}
+.mi{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--r);color:#fff;font-weight:800;font-size:18px;text-align:left;border-bottom:4px solid rgba(0,0,0,.22)}
+.mi:active{transform:translateY(2px)}
+.mi small{display:block;font-size:13px;font-weight:600;opacity:.92}
+.mi .ic{width:44px;height:44px;flex:none;border-radius:10px;background:rgba(255,255,255,.22);display:grid;place-items:center;font:800 22px 'Fraunces',serif}
+.c-red{background:var(--red)}.c-teal{background:var(--teal)}.c-purple{background:var(--purple)}.c-amber{background:var(--amber)}.c-blue{background:var(--blue)}.c-ink{background:var(--ink)}
+
+/* tarjetas */
+.card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:var(--r);background:var(--card);border:2px solid var(--line);margin-bottom:10px}
+button.card:active{transform:translateY(2px)}
+.card .body{flex:1;min-width:0}
+.card .body strong{display:block;font-size:16px}
+.card .body span.s{font-size:13px;color:var(--soft);font-weight:600}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.panel p,.panel li{color:var(--ink);font-weight:600;font-size:15px}
+.panel ul{padding-left:18px}
+.empty{padding:22px;border:2px dashed var(--line);border-radius:var(--r);text-align:center;color:var(--soft);font-weight:700;margin-bottom:12px}
+.avatar{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;background:var(--purple)}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:var(--c,var(--primary))}
+.num{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;font:800 19px 'Fraunces',serif;background:var(--c,var(--primary))}
+
+/* formularios */
+.field{display:grid;gap:5px;margin-bottom:12px}
+.field label{font-weight:800;font-size:14px}
+.field small{color:var(--soft);font-weight:600}
+input,textarea,select{width:100%;padding:12px 13px;border-radius:10px;border:2px solid var(--line);background:#fff}
+textarea{min-height:110px;resize:vertical}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:3px solid #B9C3F2;border-color:var(--primary)}
+.err{background:var(--ko);color:var(--kod);padding:10px 12px;border-radius:10px;font-weight:700;font-size:14px;margin-bottom:12px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs button{flex:1;padding:10px;border-radius:10px;border:2px solid var(--line);font-weight:800;background:var(--card)}
+.tabs button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.auth{padding-top:calc(40px + env(safe-area-inset-top,0px))}
+.auth .logo{display:block;text-align:center;font-size:38px}
+.auth p.t{text-align:center;color:var(--soft);font-weight:700;margin:6px 0 22px}
+
+/* ventana emergente */
+.modal{position:fixed;inset:0;z-index:30;display:grid;place-items:start center;padding:16px;background:rgba(27,42,73,.72);overflow:auto}
+.sheet{background:#fff;border-radius:16px;padding:18px;width:100%;max-width:520px;margin:auto}
+.sheet h3{font-size:22px;margin-bottom:12px}
+
+/* camino de racha */
+.utabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.utab{padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--card);text-align:left;font-weight:800;font-size:14px;border-left:8px solid var(--c)}
+.utab.on{background:var(--c);color:#fff;border-color:var(--c)}
+.utab small{display:block;font-weight:700;opacity:.85}
+.note{padding:10px 12px;border-radius:10px;background:#FBEFD0;color:#6B4A00;font-weight:700;font-size:14px;margin-bottom:12px}
+.path{position:relative;margin:8px 0 18px}
+.path svg{position:absolute;inset:0;width:100%;height:100%}
+.node{position:absolute;transform:translate(-50%,-50%);width:150px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:13px;font-weight:800}
+.node .b{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:800 18px 'Fraunces',serif;color:#fff;background:var(--c);border-bottom:5px solid rgba(0,0,0,.25)}
+.node.cur .b{width:74px;height:74px;box-shadow:0 0 0 7px rgba(27,42,73,.15)}
+.node.lock .b{background:#C8CFE0;color:#707A94}
+.node.lock{color:#707A94}
+.node.done .b{background:var(--green)}
+
+/* lecciones y preguntas */
+.lrow{display:flex;align-items:center;gap:12px;padding:12px 14px;border:2px solid var(--line);border-radius:var(--r);background:var(--card);margin-bottom:10px}
+.lrow .body{flex:1}
+.lrow.lock{opacity:.6}
+.progress{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:16px}
+.progress i{display:block;height:100%;background:var(--green)}
+.mchip{display:inline-block;padding:4px 12px;border-radius:99px;color:#fff;font-weight:800;font-size:13px;background:var(--c,var(--primary))}
+.formula{margin:10px 0 6px;padding:18px 10px;border-radius:var(--r);background:#fff;border:2px solid var(--line);text-align:center;font-size:1.35em;overflow-x:auto}
+.qtext{margin:12px 0 4px;font-weight:700;font-size:15.5px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;padding:11px 13px;margin-top:10px;border-radius:var(--r);background:#fff;border:2px solid var(--line);border-bottom-width:4px;text-align:left;font-weight:700}
+.opt:active{transform:translateY(2px)}
+.opt .l{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--purple)}
+.opt:nth-of-type(1) .l{background:var(--blue)}.opt:nth-of-type(2) .l{background:var(--teal)}.opt:nth-of-type(3) .l{background:var(--amber)}.opt:nth-of-type(4) .l{background:var(--red)}
+.opt .t{overflow-x:auto;padding:3px 0}
+.opt.sel{border-color:var(--primary);background:#E9EDFB}
+.opt.good{background:var(--ok);border-color:var(--green)}
+.opt.bad{background:var(--ko);border-color:var(--red)}
+.locked .opt{pointer-events:none}
+.fb{margin:14px 0 0;padding:12px 14px;border-radius:var(--r);font-weight:700;font-size:14.5px;display:grid;gap:6px}
+.fb.ok{background:var(--ok);color:#154D2B}.fb.ko{background:var(--ko);color:#6E1B24}
+.numrow{display:flex;gap:10px;margin-top:12px}
+.numrow input{flex:1;font-size:18px;font-weight:800}
+.big{text-align:center;padding:24px 8px}
+.big .e{font:800 56px 'Fraunces',serif}
+
+/* laberinto */
+.dhud{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.dchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:14px}
+.dchip i{width:12px;height:12px;border-radius:50%;background:var(--c)}
+#gwrap{position:relative;border-radius:var(--r);overflow:hidden;background:var(--ink)}
+#gcanvas{display:block;width:100%;height:clamp(300px,54vh,560px);touch-action:none}
+.goverlay{position:absolute;inset:0;display:grid;place-items:center;padding:14px;background:rgba(27,42,73,.7);overflow:auto}
+.dpad{display:grid;grid-template-columns:repeat(3,74px);grid-template-rows:repeat(2,74px);gap:8px;justify-content:center;margin-top:14px;user-select:none;-webkit-user-select:none;touch-action:none}
+.dpad button{border-radius:var(--r);background:var(--primary);color:#fff;font-size:26px;font-weight:800;border-bottom:4px solid #1B2766;touch-action:none}
+.dpad button.down{transform:translateY(3px)}
+.kbd{display:inline-block;padding:1px 8px;border-radius:6px;background:#E4E8F5;color:var(--primary);font-weight:800;font-size:13px}
+#keyhint{margin-top:14px;text-align:center;color:var(--soft);font-weight:700;font-size:14px}
+
+/* usuarios */
+.urow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;border:2px solid var(--line);border-radius:var(--r);background:#fff;margin-bottom:10px}
+.urow .body{flex:1;min-width:150px}
+.urow select{width:auto;padding:8px}
+
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;font-size:14.5px;max-width:88%;text-align:center;transition:.25s;z-index:60}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- archivos adjuntos, tests y juego de caída ---------- */
+.s{font-size:13px;color:var(--soft);font-weight:600}
+input[type=checkbox],input[type=radio]{width:auto;accent-color:var(--primary)}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:700;cursor:pointer}
+.chk input{margin-top:3px}
+.frow{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid var(--line);border-radius:var(--r);background:var(--card);margin-bottom:10px;flex-wrap:wrap}
+.frow .body{flex:1;min-width:140px;word-break:break-word}
+.fic{min-width:46px;padding:6px 4px;border-radius:8px;background:var(--primary);color:#fff;font-weight:800;font-size:12px;text-align:center;text-transform:uppercase}
+#gwrap,#dwrap{position:relative;border-radius:var(--r);overflow:hidden;background:var(--ink)}
+#darena{position:relative;height:clamp(440px,calc(100vh - 250px),760px);overflow:hidden;background:#E1EAFB;touch-action:none;user-select:none;-webkit-user-select:none}
+.ditem{position:absolute;left:0;top:0;z-index:2;padding:8px 4px;border-radius:12px;background:#fff;border:3px solid var(--c);text-align:center;white-space:nowrap;overflow:hidden;font-size:.92em;will-change:transform}
+.dplayer{position:absolute;bottom:18px;left:0;z-index:3;width:150px;display:flex;flex-direction:column;align-items:center;gap:6px;will-change:transform}
+.dsign{background:#fff;border:3px solid var(--ink);border-radius:12px;padding:8px 8px;white-space:nowrap;min-width:130px;text-align:center;font-size:1.02em}
+.dchar{position:relative;width:88px;height:46px;border-radius:12px 12px 18px 18px;background:var(--primary)}
+.dchar::before,.dchar::after{content:'';position:absolute;top:12px;width:10px;height:13px;background:#fff;border-radius:3px}
+.dchar::before{left:26px}.dchar::after{right:26px}
+.dchar i{position:absolute;left:30px;right:30px;bottom:8px;height:5px;background:#fff;border-radius:3px}
+.dfb{position:absolute;z-index:4;left:50%;top:38%;transform:translate(-50%,-50%);padding:12px 18px;border-radius:12px;font-weight:800;text-align:center;max-width:88%;border:3px solid}
+.dfb.ok{background:var(--ok);color:#154D2B;border-color:var(--green)}.dfb.ko{background:var(--ko);color:#6E1B24;border-color:var(--red)}
+.dpad2{display:flex;justify-content:space-between;gap:12px;margin-top:14px;user-select:none;-webkit-user-select:none;touch-action:none}
+.dpad2 button{flex:1;height:76px;border-radius:var(--r);background:var(--primary);color:#fff;font-size:30px;font-weight:800;border-bottom:4px solid #1B2766;touch-action:none}
+.dpad2 button.down{transform:translateY(3px)}
+
+/* fondo del juego de caída */
+.dbg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.dband{position:absolute;left:0;right:0}
+.dband.b1{top:0;height:34%;background:#B7CCF3}.dband.b2{top:34%;height:30%;background:#CBDCF8}.dband.b3{top:64%;bottom:0;background:#E1EAFB}
+.dsun{position:absolute;right:9%;top:6%;width:52px;height:52px;border-radius:50%;background:#FFD66B;box-shadow:0 0 0 10px #FFE59E,0 0 0 22px #FFF0C2}
+.dcloud{position:absolute;left:0;height:24px;width:92px;border-radius:99px;background:#fff;animation:dcloud 70s linear infinite}
+.dcloud::before,.dcloud::after{content:'';position:absolute;border-radius:50%;background:#fff}
+.dcloud::before{left:14px;top:-15px;width:38px;height:38px}.dcloud::after{left:44px;top:-9px;width:30px;height:30px}
+.dcloud.c1{top:7%;animation-delay:-8s}.dcloud.c2{top:16%;transform:scale(1.4);animation-duration:95s;animation-delay:-52s}
+.dcloud.c3{top:26%;animation-duration:80s;animation-delay:-30s;opacity:.85}.dcloud.c4{top:41%;transform:scale(.8);animation-duration:110s;animation-delay:-70s;opacity:.8}
+.dcloud.c5{top:52%;animation-duration:125s;animation-delay:-15s;opacity:.7}
+@keyframes dcloud{from{translate:-160px 0}to{translate:calc(100vw + 40px) 0}}
+.dsym{position:absolute;font:800 34px Fraunces,Georgia,serif;color:#9FB6E6;opacity:.75;animation:dbob 7s ease-in-out infinite}
+.dsym.s1{left:6%;top:12%}.dsym.s2{left:30%;top:6%;animation-delay:-2s}.dsym.s3{left:58%;top:20%;animation-delay:-4s}.dsym.s4{left:78%;top:34%;animation-delay:-1s}
+.dsym.s5{left:14%;top:38%;animation-delay:-3s}.dsym.s6{left:44%;top:47%;animation-delay:-5s}.dsym.s7{left:86%;top:58%;animation-delay:-2.5s}.dsym.s8{left:22%;top:60%;animation-delay:-6s}
+@keyframes dbob{0%,100%{translate:0 0}50%{translate:0 -10px}}
+.dhills{position:absolute;left:0;right:0;bottom:20px;width:100%;height:150px}
+.dground{position:absolute;left:0;right:0;bottom:0;height:22px;background:#3FAE6A;border-top:5px solid #6CCB8B}
+.dtree{position:absolute;bottom:22px;width:12px;height:36px;background:#8B5E34}
+.dtree::before{content:'';position:absolute;left:-17px;top:-34px;width:46px;height:46px;border-radius:50%;background:#2E9E5B}
+.dtree::after{content:'';position:absolute;left:-6px;top:-48px;width:24px;height:24px;border-radius:50%;background:#3FAE6A}
+.dflower{position:absolute;bottom:26px;width:8px;height:8px;border-radius:50%;background:#F43F5E;box-shadow:0 8px 0 -3px #2E9E5B}
+.dflower.f2{background:#FFD66B}.dflower.f3{background:#fff}
+</style>
+</head>
+<body>
+<div id="app"><main id="view"></main></div>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!--
+  REGLAS DE FIRESTORE (se pegan en Firebase Console → Firestore Database → Reglas → Publicar).
+  No se usan en la página: están aquí para que todo quede en un solo archivo.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function profile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function hasProfile() { return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)); }
+    function isAdmin() { return hasProfile() && profile().role == 'admin'; }
+    function isStaff() { return hasProfile() && profile().role in ['admin', 'docente']; }
+    function hasAccess() { return isStaff() || (hasProfile() && profile().enrolled == true); }
+    function adminEmail() { return request.auth.token.email.lower() == 'santiagoduran15.24@integralab.com'; }
+    // ¿la actividad todavía recibe entregas? (el docente decide si se cierra al vencer la fecha)
+    function actOpen(actId) {
+      let a = get(/databases/$(database)/documents/activities/$(actId)).data;
+      return a.get('closeAfter', false) == false || a.get('dueTs', 0) == 0 || request.time.toMillis() <= a.get('dueTs', 0);
+    }
+    function fileMeta(fid) { return get(/databases/$(database)/documents/files/$(fid)).data; }
+
+    // ===== Usuarios =====
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['email', 'name', 'role', 'enrolled', 'createdAt'])
+        && ((request.resource.data.role == 'estudiante' && request.resource.data.enrolled == false)
+            || (adminEmail() && request.resource.data.role == 'admin' && request.resource.data.enrolled == true));
+      allow update: if signedIn() && (
+        (isAdmin() && uid != request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role', 'enrolled', 'name']))
+        || (isStaff() && resource.data.role == 'estudiante'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['enrolled']))
+        || (request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name']))
+      );
+    }
+
+    // ===== Unidades =====
+    match /units/{id} { allow read: if hasAccess(); allow write: if isStaff(); }
+
+    // ===== Actividades y entregas =====
+    match /activities/{id} {
+      allow read: if hasAccess();
+      allow write: if isStaff();
+      match /submissions/{uid} {
+        allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+        allow create: if hasAccess() && request.auth.uid == uid && actOpen(id)
+          && request.resource.data.keys().hasOnly(['uid', 'name', 'text', 'link', 'files', 'updatedAt']);
+        allow update: if (hasAccess() && request.auth.uid == uid && actOpen(id)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'text', 'link', 'files', 'updatedAt']))
+          || (isStaff() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['grade', 'feedback', 'gradedBy', 'gradedAt']));
+      }
+    }
+
+    // ===== Archivos adjuntos (guardados en Firestore, sin Storage) =====
+    match /files/{fid} {
+      allow create: if hasAccess() && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['name', 'type', 'size', 'ownerUid', 'ownerName', 'scope', 'chunks', 'desc', 'createdAt', 'actId'])
+        && request.resource.data.size is int && request.resource.data.size > 0 && request.resource.data.size <= 10485760
+        && request.resource.data.chunks is int && request.resource.data.chunks >= 1 && request.resource.data.chunks <= 24
+        && request.resource.data.desc.size() <= 200
+        && ((request.resource.data.scope == 'public' && isStaff())
+            || (request.resource.data.scope == 'private' && 'actId' in request.resource.data && actOpen(request.resource.data.actId)));
+      allow delete: if isStaff() || (hasAccess() && resource.data.ownerUid == request.auth.uid);
+      match /chunks/{i} {
+        allow get: if hasAccess() && (fileMeta(fid).scope == 'public' || fileMeta(fid).ownerUid == request.auth.uid || isStaff());
+        allow create: if hasAccess() && fileMeta(fid).ownerUid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['i', 'd']) && request.resource.data.d is string && request.resource.data.d.size() <= 700000;
+        allow delete: if isStaff() || (hasAccess() && fileMeta(fid).ownerUid == request.auth.uid);
+      }
+    }
+
+    // ===== Tests (preguntas cerradas y abiertas) =====
+    match /tests/{id} {
+      allow read: if hasAccess();
+      allow write: if isStaff();
+      match /results/{uid} {
+        allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+        allow create, update: if hasAccess() && request.auth.uid == uid
+          && request.resource.data.keys().hasOnly(['uid', 'name', 'answers', 'auto', 'max', 'openMax', 'attempts', 'updatedAt'])
+          && request.resource.data.attempts <= get(/databases/$(database)/documents/tests/$(id)).data.get('attempts', 1);
+      }
+      match /grades/{uid} {      // calificación de las preguntas abiertas: solo docentes
+        allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+        allow write: if isStaff();
+      }
+    }
+
+    // ===== Foro =====
+    match /threads/{id} {
+      allow read: if hasAccess();
+      allow create: if hasAccess() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isStaff() || (hasAccess() && resource.data.uid == request.auth.uid);
+      match /replies/{rid} {
+        allow read: if hasAccess();
+        allow create: if hasAccess() && request.resource.data.uid == request.auth.uid;
+        allow delete: if isStaff() || (hasAccess() && resource.data.uid == request.auth.uid);
+      }
+    }
+
+    // ===== Progreso y racha (cada estudiante escribe el suyo) =====
+    match /progress/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+      allow write: if hasAccess() && request.auth.uid == uid;
+    }
+  }
+}
+-->
+
+<script type="module">
+/* ==========================================================================
+   ∫ntegraLab · todo en un solo archivo (HTML + CSS + JavaScript)
+   Usa SOLO Firebase Authentication y Firestore (no necesita Storage).
+   ========================================================================== */
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,updateProfile}
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {initializeFirestore,doc,getDoc,setDoc,updateDoc,deleteDoc,addDoc,collection,onSnapshot}
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+/* ╔══════════════════════ CONFIGURACIÓN (lo único que debes editar) ══════════════════════╗ */
+// 1) Pega aquí la configuración de tu app web de Firebase (Configuración del proyecto → Tus apps).
+const firebaseConfig = {
+  apiKey: "AIzaSyA5eDSi4PZeE4GfJDbr6E_x3X_a3UeNW6Q",
+  authDomain: "integralab-ff7cd.firebaseapp.com",
+  projectId: "integralab-ff7cd",
+  storageBucket: "integralab-ff7cd.firebasestorage.app",   // la app NO usa Storage
+  messagingSenderId: "683955104249",
+  appId: "1:683955104249:web:0b30d0d7c211dd13d4b528",
+  measurementId: "G-99PZL2M5PC"
+};
+// 2) Correo que nace como administrador (debe ser el mismo que pongas en las reglas de Firestore).
+const ADMIN_EMAIL = "santiagoduran15.24@integralab.com";
+// 3) Nombre de tu imagen de banner (en la misma carpeta que este index.html).
+const BANNER_IMAGE = "Banner.png";
+/* ╚════════════════════════════════════════════════════════════════════════════════════╝ */
+
+/* ---------- ejercicios, caminos y lecciones ---------- */
+const EX = (() => {
+/* ∫ntegraLab · ejercicios. Cada tema tiene varias plantillas con parámetros aleatorios;
+   cada lección usa una combinación distinta y se recuerda lo ya visto para no repetir. */
+const r = String.raw;
+
+const METHODS = {
+  concept:'Concepto de antiderivada', basica:'Reglas básicas', init:'Condiciones iniciales', riemann:'Sumas de Riemann',
+  area:'Área bajo la curva', tfc:'Teorema fundamental', def:'Integral definida', props:'Propiedades de la integral',
+  sust:'Sustitución', partes:'Integración por partes', trigsub:'Sustitución trigonométrica', fracc:'Fracciones parciales',
+  between:'Área entre curvas', vol:'Volúmenes de revolución', fis:'Aplicaciones', tf:'Verdadero o falso'
+};
+
+/* ---------- utilidades ---------- */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const fr=(n,d=1)=>{ const g=gcd(n,d)||1; if(d<0){n=-n;d=-d;} return [n/g,d/g]; };
+const fadd=(a,b)=>fr(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const fmul=(a,b)=>fr(a[0]*b[0],a[1]*b[1]);
+const ansTex=([n,d])=>d===1?`${n}`:r`${n<0?'-':''}\frac{${Math.abs(n)}}{${d}}`;
+const cf=([n,d])=>(n===1&&d===1)?'':(n===-1&&d===1)?'-':ansTex([n,d]);       // coeficiente delante de una expresión
+const xp=(p,v='x')=>p===0?'':p===1?v:r`${v}^{${p}}`;
+const term=([n,d],p,first,v)=>{ if(!n) return ''; const an=Math.abs(n);
+  const co=d===1?((an===1&&p>0)?'':`${an}`):r`\frac{${an}}{${d}}`; return (n<0?'-':(first?'':'+'))+co+xp(p,v); };
+const poly=(ts,v='x')=>{ let o=''; for(const [c,p] of ts){ const t=term(c,p,!o,v); if(t) o+=t; } return o||'0'; };
+const lin=a=>a>0?`x+${a}`:`x-${-a}`;
+const sgn=()=>pick([1,-1]);
+const sg=n=>n<0?`-${-n}`:`+${n}`;
+const cpl=c=>c===0?'':sg(c);
+
+const MC=(m,f,ok,wr,e,q,chk)=>({t:'mc',m,f,q,o:[ok,...wr],e,chk});
+const NUM=(m,f,ans,e,q)=>({t:'num',m,f,q,ans,e});
+const TF=(s,ok,e)=>()=>({t:'tf',m:'tf',s,ok,e});
+
+/* ---------- tabla de integrales básicas ---------- */
+const BASE=[
+  [a=>r`${a}e^{x}`,r`e^{x}`,[r`xe^{x}`,r`\ln|x|`,r`e^{x+1}`]],
+  [a=>r`${a}\sin x`,r`-\cos x`,[r`\cos x`,r`\sin x`,r`-\sin x`]],
+  [a=>r`${a}\cos x`,r`\sin x`,[r`-\sin x`,r`\cos x`,r`-\cos x`]],
+  [a=>r`\frac{${a}}{x}`,r`\ln|x|`,[r`-\frac{1}{x^{2}}`,r`\frac{1}{x^{2}}`,r`x\ln x`]],
+  [a=>r`${a}\sec^{2}x`,r`\tan x`,[r`-\tan x`,r`\sec x\tan x`,r`\frac{\sec^{3}x}{3}`]],
+  [a=>r`${a}\csc^{2}x`,r`-\cot x`,[r`\cot x`,r`-\csc x`,r`\tan x`]],
+  [a=>r`${a}\sec x\tan x`,r`\sec x`,[r`\tan x`,r`\sec^{2}x`,r`-\sec x`]],
+  [a=>r`\frac{${a}}{1+x^{2}}`,r`\arctan x`,[r`\ln(1+x^{2})`,r`\arcsin x`,r`\frac{1}{1+x^{2}}`]],
+  [a=>r`\frac{${a}}{\sqrt{1-x^{2}}}`,r`\arcsin x`,[r`\arccos x`,r`\arctan x`,r`\sqrt{1-x^{2}}`]]
+];
+const coefTex=(a,F)=>F[0]==='-'?`-${a}${F.slice(1)}`:`${a}${F}`;
+const dxs=r`\,dx`;
+const NTH={'1/2':a=>r`${a}\sqrt{x}`,'-1/2':a=>r`\frac{${a}}{\sqrt{x}}`,'1/3':a=>r`${a}\sqrt[3]{x}`,'2/3':a=>r`${a}\sqrt[3]{x^{2}}`,'3/2':a=>r`${a}\sqrt{x^{3}}`};
+
+const G={};
+
+/* ===== U1 · Antiderivadas ===== */
+G.power=()=>{ const a=rnd(1,9), n=rnd(2,7), c=fr(a,n+1);
+  return MC('concept',r`\int ${a===1?'':a}${xp(n)}${dxs}`,poly([[c,n+1]])+'+C',
+    [poly([[fr(a,n),n+1]])+'+C',poly([[fr(a*n),n-1]])+'+C',poly([[c,n]])+'+C'],
+    r`Regla de la potencia: $\int x^n\,dx=\frac{x^{n+1}}{n+1}+C$. Aquí $n=${n}$, así que se divide entre $${n+1}$.`,null,
+    {f:x=>a*x**n,F:x=>a/(n+1)*x**(n+1)}); };
+G.powerSum=()=>{ let n=rnd(2,6), m=rnd(1,5); if(n===m) m=n-1; [n,m]=[Math.max(n,m),Math.min(n,m)];
+  const a=rnd(1,8)*sgn(), b=rnd(1,8)*sgn();
+  return MC('concept',r`\int (${poly([[fr(a),n],[fr(b),m]])})${dxs}`,poly([[fr(a,n+1),n+1],[fr(b,m+1),m+1]])+'+C',
+    [poly([[fr(a,m+1),n+1],[fr(b,n+1),m+1]])+'+C',poly([[fr(a,n+1),n+1],[fr(b),m+1]])+'+C',poly([[fr(a*n),n-1],[fr(b*m),m-1]])+'+C'],
+    r`Integra cada término por separado con $\int x^k\,dx=\frac{x^{k+1}}{k+1}$.`,null,
+    {f:x=>a*x**n+b*x**m,F:x=>a*x**(n+1)/(n+1)+b*x**(m+1)/(m+1)}); };
+G.antider=()=>{ const a=rnd(1,6)*sgn(), n=rnd(2,5), b=rnd(1,9)*sgn();
+  return MC('concept',r`f(x)=${poly([[fr(a),n],[fr(b),0]])}`,poly([[fr(a,n+1),n+1],[fr(b),1]]),
+    [poly([[fr(a*n),n-1]]),poly([[fr(a),n+1],[fr(b),1]]),poly([[fr(a,n+1),n+1],[fr(b),0]])],
+    r`Una antiderivada se obtiene integrando: la constante $${b}$ pasa a ser $${b}x$.`,'Una antiderivada de f es:'); };
+G.notAnti=()=>{ const k=rnd(1,5), cs=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,2).map(c=>c*sgn());
+  return MC('concept',r`f(x)=${2*k}x`,poly([[fr(2*k),2],[fr(cs[0]),0]]),
+    [poly([[fr(k),2],[fr(cs[0]),0]]),poly([[fr(k),2],[fr(cs[1]),0]]),poly([[fr(k),2]])],
+    r`Las antiderivadas de $${2*k}x$ son $${k}x^2+C$: solo difieren en la constante. La opción con $${2*k}x^2$ tiene derivada $${4*k}x$.`,'¿Cuál NO es una antiderivada de f?'); };
+G.constant=()=>{ const k=rnd(2,9);
+  return MC('concept',r`\int ${k}${dxs}`,`${k}x+C`,[`${k}+C`,r`\frac{x}{${k}}+C`,r`\frac{${k}x^{2}}{2}+C`],r`La integral de una constante es $kx+C$.`); };
+G.evalF=()=>{ const a=rnd(1,6), b=rnd(1,8), c=rnd(1,4);
+  return NUM('concept',r`F'(x)=${a}x+${b},\quad F(0)=0`,fadd(fr(a*c*c,2),fr(b*c)),
+    r`$F(x)=\frac{${a}}{2}x^2+${b}x$; se evalúa en $x=${c}$.`,`Calcula F(${c}):`); };
+G.fromF=()=>{ const a=rnd(1,5), b=rnd(1,6), c=rnd(1,8)*sgn();
+  return MC('concept',r`\int f(x)\,dx=${poly([[fr(a),3],[fr(b),2],[fr(c),1]])}+C`,poly([[fr(3*a),2],[fr(2*b),1],[fr(c),0]]),
+    [poly([[fr(a,4),4],[fr(b,3),3],[fr(c,2),2]]),poly([[fr(6*a),1],[fr(2*b),0]]),poly([[fr(3*a),2],[fr(2*b),1]])],
+    r`Si $F$ es una antiderivada de $f$, entonces $f=F'$: se deriva.`,'Entonces f(x) es:'); };
+
+G.trig=()=>{ const a=rnd(2,9), [fn,F,w]=pick(BASE);
+  return MC('basica',r`\int ${fn(a)}${dxs}`,coefTex(a,F)+'+C',shuffle(w).map(x=>coefTex(a,x)+'+C'),
+    r`La constante $${a}$ sale de la integral y se usa la tabla: $\int ${fn(1)}\,dx=${F}+C$.`); };
+G.poly=()=>{ const a=rnd(1,6)*sgn(), b=rnd(1,8)*sgn(), c=rnd(1,9)*sgn();
+  return MC('basica',r`\int (${poly([[fr(a),2],[fr(b),1],[fr(c),0]])})${dxs}`,poly([[fr(a,3),3],[fr(b,2),2],[fr(c),1]])+'+C',
+    [poly([[fr(a),3],[fr(b),2],[fr(c),1]])+'+C',poly([[fr(a,3),3],[fr(b,2),2],[fr(c),0]])+'+C',poly([[fr(2*a),1],[fr(b),0]])+'+C'],
+    r`Integra término a término con la regla de la potencia y no olvides $C$.`); };
+G.neg=()=>{ const a=rnd(1,9), n=rnd(2,5), [p,q]=fr(a,n-1), e=n-1, D=(k)=>`${k>1?k:''}${xp(e)}`;
+  return MC('basica',r`\int \frac{${a}}{x^{${n}}}${dxs}`,r`-\frac{${p}}{${D(q)}}+C`,
+    [r`\frac{${p}}{${D(q)}}+C`,r`-\frac{${a}}{${n}x^{${n+1}}}+C`,r`-\frac{${a}}{x^{${e}}}+C`],
+    r`Escribe $\frac{${a}}{x^{${n}}}=${a}x^{-${n}}$ y suma 1 al exponente: queda $\frac{${a}x^{-${e}}}{-${e}}$.`); };
+G.rad=()=>{ const [n,d]=pick([[1,2],[-1,2],[1,3],[2,3],[3,2]]), a=rnd(1,8), E=fr(n+d,d), c=fr(a*d,n+d), c2=fr(a*(n+d),d);
+  const ex=ansTex(E), r0=ansTex(fr(n,d));
+  return MC('basica',r`\int ${NTH[n+'/'+d](a)}${dxs}`,r`${cf(c)}x^{${ex}}+C`,
+    [r`${cf(c2)}x^{${ex}}+C`,r`${cf(c)}x^{${r0}}+C`,r`${a===1?'':a}x^{${r0}}+C`],
+    r`Escribe la raíz como potencia, $x^{${r0}}$; el nuevo exponente es $${ex}$ y se divide entre él.`,null,
+    {f:x=>a*x**(n/d),F:x=>a*d/(n+d)*x**((n+d)/d)}); };
+G.expand=()=>{ const a=rnd(2,5), b=rnd(1,6)*sgn(), L=`${a}x${b<0?'-':'+'}${Math.abs(b)}`;
+  return MC('basica',r`\int (${L})^{2}${dxs}`,poly([[fr(a*a,3),3],[fr(a*b),2],[fr(b*b),1]])+'+C',
+    [poly([[fr(a*a),3],[fr(a*b),2],[fr(b*b),1]])+'+C',poly([[fr(a*a,3),3],[fr(a*b,2),2],[fr(b*b),1]])+'+C',r`\frac{(${L})^{3}}{3}+C`],
+    r`Desarrolla $(${L})^2$ y luego integra cada término.`); };
+G.prod=()=>{ let a=rnd(1,6)*sgn(), b=rnd(1,6)*sgn(); if(a===b) b=-a;
+  return MC('basica',r`\int (${lin(a)})(${lin(b)})${dxs}`,poly([[fr(1,3),3],[fr(a+b,2),2],[fr(a*b),1]])+'+C',
+    [poly([[fr(1,3),3],[fr(a+b),2],[fr(a*b),1]])+'+C',poly([[fr(1,3),3],[fr(a+b,2),2],[fr(a*b),0]])+'+C',poly([[fr(1),3],[fr(a+b,2),2],[fr(a*b),1]])+'+C'],
+    r`Multiplica primero: $(${lin(a)})(${lin(b)})=${poly([[fr(1),2],[fr(a+b),1],[fr(a*b),0]])}$.`); };
+G.divide=()=>{ const n=rnd(3,6), a=rnd(1,7)*sgn();
+  return MC('basica',r`\int \frac{x^{${n}}${a<0?'-':'+'}${Math.abs(a)}x}{x}${dxs}`,poly([[fr(1,n),n],[fr(a),1]])+'+C',
+    [poly([[fr(1,n+1),n+1],[fr(a,2),2]])+'+C',poly([[fr(1,n),n],[fr(a),0]])+'+C',poly([[fr(1,n-1),n-1],[fr(a),1]])+'+C'],
+    r`Simplifica primero: $\frac{x^{${n}}${sg(a)}x}{x}=x^{${n-1}}${sg(a)}$.`); };
+G.mix=()=>{ const i=rnd(0,4); let j=rnd(0,4); if(j===i) j=(i+1)%5; const a1=rnd(1,6), a2=rnd(1,6), s=sgn();
+  const [f1,F1]=BASE[i], [f2,F2]=BASE[j], raw=coefTex(a2,F2), neg=raw[0]==='-', sign2=(s>0)!==neg;
+  const build=(p1,p2,sg2)=>`${p1}${sg2?'+':'-'}${p2}+C`, body=raw.replace(/^-/,''), p1=coefTex(a1,F1);
+  return MC('basica',r`\int (${f1(a1)}${s>0?'+':'-'}${f2(a2)})${dxs}`,build(p1,body,sign2),
+    [build(p1,body,!sign2),build(coefTex(a1,F1[0]==='-'?F1.slice(1):'-'+F1),body,sign2),build(coefTex(a2,F1),coefTex(a1,F2).replace(/^-/,''),sign2)],
+    r`Integra cada término con la tabla; el signo de la suma se conserva.`); };
+
+/* condiciones iniciales */
+G.init=()=>{ const a=rnd(1,6)*sgn(), b=rnd(1,8)*sgn(), c=rnd(1,9)*sgn();
+  return MC('init',r`F'(x)=${poly([[fr(a),2],[fr(b),0]])},\quad F(0)=${c}`,poly([[fr(a,3),3],[fr(b),1],[fr(c),0]]),
+    [poly([[fr(a,3),3],[fr(b),1]]),poly([[fr(a,3),3],[fr(b),1],[fr(-c),0]]),poly([[fr(a),3],[fr(b),1],[fr(c),0]])],
+    r`Integra y usa $F(0)=${c}$: al evaluar en $x=0$ solo queda la constante, así que $C=${c}$.`,'Halla F(x):'); };
+G.initTrig=()=>{ const a=rnd(2,7), c=rnd(1,9)*sgn();
+  if(Math.random()<.5) return MC('init',r`F'(x)=${a}\cos x,\quad F(0)=${c}`,r`${a}\sin x${cpl(c)}`,
+    [r`${a}\sin x`,r`${a}\sin x${cpl(-c)}`,r`-${a}\sin x${cpl(c)}`],r`$F(x)=${a}\sin x+C$ y $F(0)=C=${c}$.`,'Halla F(x):');
+  return MC('init',r`F'(x)=${a}\sin x,\quad F(0)=${c}`,r`-${a}\cos x${cpl(c+a)}`,
+    [r`-${a}\cos x${cpl(c)}`,r`${a}\cos x${cpl(c)}`,r`-${a}\cos x${cpl(c-a)}`],r`$F(x)=-${a}\cos x+C$ y $F(0)=-${a}+C=${c}$, así que $C=${c+a}$.`,'Halla F(x):'); };
+G.initExp=()=>{ const a=rnd(2,7), c=rnd(1,9)*sgn();
+  return MC('init',r`F'(x)=${a}e^{x},\quad F(0)=${c}`,r`${a}e^{x}${cpl(c-a)}`,
+    [r`${a}e^{x}${cpl(c)}`,r`${a}e^{x}${cpl(c+a)}`,r`${a}e^{x}${cpl(a-c)}`],r`$F(0)=${a}+C=${c}$, así que $C=${c-a}$.`,'Halla F(x):'); };
+G.init2=()=>{ const a=rnd(1,6)*2, b=rnd(1,6)*sgn(), c=rnd(1,6)*sgn(), d=rnd(1,6)*sgn();
+  return MC('init',r`F''(x)=${poly([[fr(a),1],[fr(b),0]])},\quad F'(0)=${c},\ F(0)=${d}`,poly([[fr(a,6),3],[fr(b,2),2],[fr(c),1],[fr(d),0]]),
+    [poly([[fr(a,3),3],[fr(b,2),2],[fr(c),1],[fr(d),0]]),poly([[fr(a,6),3],[fr(b),2],[fr(c),1],[fr(d),0]]),poly([[fr(a,6),3],[fr(b,2),2],[fr(d),1],[fr(c),0]])],
+    r`Integra dos veces, usando $F'(0)=${c}$ y luego $F(0)=${d}$ para las constantes.`,'Halla F(x):'); };
+G.findC=()=>{ const a=rnd(1,6)*2, b=rnd(1,6), p=rnd(1,3), q=rnd(1,9)*sgn();
+  return NUM('init',r`F'(x)=${a}x+${b},\quad F(${p})=${q}`,fadd(fr(q),fr(-(a/2*p*p+b*p))),
+    r`$F(x)=${a/2}x^2+${b}x+C$; al imponer $F(${p})=${q}$ se despeja $C$.`,'Halla el valor de la constante C:'); };
+G.velPos=()=>{ const a=rnd(1,6)*2, b=rnd(1,8), c=rnd(1,9);
+  return MC('init',r`v(t)=${a}t+${b},\quad s(0)=${c}`,poly([[fr(a,2),2],[fr(b),1],[fr(c),0]],'t'),
+    [poly([[fr(a),2],[fr(b),1],[fr(c),0]],'t'),poly([[fr(a,2),2],[fr(b),1]],'t'),poly([[fr(a,2),2],[fr(b),1],[fr(-c),0]],'t')],
+    r`La posición $s(t)$ es una antiderivada de $v(t)$; $s(0)=${c}$ fija la constante.`,'Halla s(t):'); };
+
+/* ===== U2 · Integral definida ===== */
+G.area=()=>{ const a=rnd(1,6), n=rnd(1,3), b=rnd(1,3);
+  return NUM('area',r`\int_0^{${b}} ${a===1?'':a}${xp(n)}${dxs}`,fr(a*b**(n+1),n+1),
+    r`La antiderivada es $\frac{${a}x^{${n+1}}}{${n+1}}$; se evalúa en $${b}$ y en $0$.`,'Calcula el área bajo la curva (exacta):'); };
+G.riemann=()=>{ const lr=Math.random()<.5, L=pick([2,4]), n=pick([2,4]), dx=fr(L,n), kind=rnd(0,1), a=rnd(1,3), b=rnd(0,3);
+  const f=x=>kind?fmul(x,x):fadd(fmul(fr(a),x),fr(b)); let s=fr(0);
+  for(let i=lr?1:0;i<(lr?n+1:n);i++) s=fadd(s,f(fmul(fr(i),dx)));
+  return NUM('riemann',r`f(x)=${kind?'x^{2}':poly([[fr(a),1],[fr(b),0]])},\ [0,${L}],\ n=${n}`,fmul(s,dx),
+    r`$\Delta x=\frac{${L}}{${n}}$; los puntos usados son los extremos ${lr?'derechos':'izquierdos'} y se suma $f(x_i)\Delta x$.`,`Suma de Riemann con ${n} rectángulos (extremo ${lr?'derecho':'izquierdo'}):`); };
+G.trap=()=>{ const a=rnd(1,5), b=rnd(1,6), p=rnd(0,2), q=p+rnd(1,3);
+  return NUM('area',r`y=${a}x+${b},\quad x=${p}\ \text{y}\ x=${q}`,fadd(fr(a*(q*q-p*p),2),fr(b*(q-p))),
+    r`El área es $\int_{${p}}^{${q}}(${a}x+${b})\,dx$ (también un trapecio).`,'Área bajo la recta y sobre el eje x:'); };
+G.parab=()=>{ const a=rnd(2,6);
+  if(Math.random()<.5) return NUM('area',r`y=x(${a}-x),\quad 0\le x\le ${a}`,fr(a**3,6),r`$\int_0^{${a}}(${a}x-x^2)\,dx=\frac{${a**3}}{6}$.`,'Calcula el área bajo la parábola:');
+  return NUM('area',r`y=x^{2}-${a*a},\quad 0\le x\le ${a}`,fr(2*a**3,3),r`Aquí $f\le 0$: el área es $\int_0^{${a}}(${a*a}-x^2)\,dx=\frac{${2*a**3}}{3}$.`,'Área entre la curva y el eje x (positiva):'); };
+G.setupArea=()=>{ const a=rnd(2,6), n=rnd(1,3), p=rnd(0,2), q=p+rnd(1,3), F=(lo,hi,k)=>r`\int_{${lo}}^{${hi}} ${a}${xp(k)}${dxs}`;
+  return MC('area',r`y=${a}${xp(n)},\quad x=${p},\ x=${q}`,F(p,q,n),[F(q,p,n),F(p,q,n+1),r`\int_{0}^{${q-p}} ${a}${xp(n)}${dxs}`],
+    r`El área bajo la curva entre $x=${p}$ y $x=${q}$ se escribe con esos límites, de menor a mayor.`,'¿Qué integral da el área bajo la curva?'); };
+
+G.def=()=>{ const a=rnd(1,4)*sgn(), b=rnd(1,6)*sgn(), p=rnd(-2,1), q=p+rnd(1,3);
+  return NUM('def',r`\int_{${p}}^{${q}} (${poly([[fr(a),2],[fr(b),0]])})${dxs}`,fadd(fr(a*(q**3-p**3),3),fr(b*(q-p))),
+    r`La antiderivada es $\frac{${a}}{3}x^3${b<0?'':'+'}${b}x$; evalúa en $${q}$ y resta su valor en $${p}$.`,'Calcula con el teorema fundamental:'); };
+G.derint=()=>{ const k=rnd(1,7);
+  return MC('tfc',r`\frac{d}{dx}\int_{1}^{x}(t^{2}+${k})\,dt`,r`x^{2}+${k}`,[r`\frac{x^{3}}{3}+${k}x`,r`2x`,r`x^{2}+${k}-${1+k}`],
+    r`Por la primera parte del teorema fundamental, derivar y integrar se cancelan.`); };
+G.chain=()=>{ const k=rnd(1,6);
+  return MC('tfc',r`\frac{d}{dx}\int_{1}^{x^{2}}(t+${k})\,dt`,r`2x(x^{2}+${k})`,[r`x^{2}+${k}`,r`2x`,r`x(x^{2}+${k})`],
+    r`Se evalúa el integrando en el límite superior, $x^2$, y se multiplica por su derivada, $2x$ (regla de la cadena).`); };
+G.ftc2=()=>{ const a=rnd(1,6), p=rnd(0,2), q=p+rnd(1,3);
+  return NUM('tfc',r`\int_{${p}}^{${q}} F'(x)\,dx,\quad F(x)=x^{3}+${a}x`,fadd(fr(q**3+a*q),fr(-(p**3+a*p))),
+    r`Segunda parte del teorema: $\int_a^b F'(x)\,dx=F(b)-F(a)$.`,'Calcula:'); };
+G.defTrig=()=>{ const a=rnd(2,7), v=rnd(0,3);
+  if(v===0) return NUM('def',r`\int_0^{\pi} ${a}\sin x${dxs}`,fr(2*a),r`$[-${a}\cos x]_0^{\pi}=${a}+${a}$.`,'Calcula:');
+  if(v===1) return NUM('def',r`\int_0^{\pi/2} ${a}\cos x${dxs}`,fr(a),r`$[${a}\sin x]_0^{\pi/2}=${a}$.`,'Calcula:');
+  if(v===2){ const k=rnd(2,9); return NUM('def',r`\int_0^{\ln ${k}} e^{x}${dxs}`,fr(k-1),r`$[e^x]_0^{\ln ${k}}=${k}-1$.`,'Calcula:'); }
+  const k=rnd(2,5); return NUM('def',r`\int_0^{${k*k}} \sqrt{x}${dxs}`,fr(2*k**3,3),r`$\left[\frac{2}{3}x^{3/2}\right]_0^{${k*k}}=\frac{2}{3}\cdot ${k**3}$.`,'Calcula:'); };
+G.defRat=()=>{ const k=rnd(2,6), v=rnd(0,1);
+  if(v===0) return NUM('def',r`\int_1^{${k}} \frac{1}{x^{2}}${dxs}`,fr(k-1,k),r`$\left[-\frac{1}{x}\right]_1^{${k}}=1-\frac{1}{${k}}$.`,'Calcula:');
+  return NUM('def',r`\int_1^{${k*k}} \frac{1}{\sqrt{x}}${dxs}`,fr(2*(k-1)),r`$[2\sqrt{x}]_1^{${k*k}}=2(${k}-1)$.`,'Calcula:'); };
+
+G.propsA=()=>{ const v=rnd(0,2), p=rnd(2,9)*sgn(), q=rnd(2,9)*sgn(), k=rnd(2,5);
+  if(v===0) return NUM('props',r`\int_{1}^{6} f(x)\,dx`,fr(p+q),r`Aditividad: $\int_a^b+\int_b^c=\int_a^c$, así que $${p}+(${q})$.`,r`Si $\int_{1}^{3} f=${p}$ y $\int_{3}^{6} f=${q}$, calcula:`);
+  if(v===1) return NUM('props',r`\int_{4}^{2} f(x)\,dx`,fr(-p),r`Al invertir los límites cambia el signo.`,r`Si $\int_{2}^{4} f=${p}$, calcula:`);
+  return NUM('props',r`\int_{2}^{4} ${k}f(x)\,dx`,fr(k*p),r`Las constantes salen de la integral: $${k}\cdot ${p}$.`,r`Si $\int_{2}^{4} f=${p}$, calcula:`); };
+G.propsB=()=>{ const v=rnd(0,2), p=rnd(2,9)*sgn(), q=rnd(2,9)*sgn(), a=rnd(2,4), b=rnd(1,4)*sgn(), k=rnd(2,9);
+  if(v===0) return NUM('props',r`\int_{0}^{5} (${a}f(x)${sg(b)}g(x))\,dx`,fr(a*p+b*q),r`Linealidad: $${a}\cdot ${p}+(${b})\cdot ${q}$.`,r`Si $\int_{0}^{5} f=${p}$ y $\int_{0}^{5} g=${q}$, calcula:`);
+  if(v===1) return NUM('props',r`\int_{3}^{6} f(x)\,dx`,fr(p-q),r`$\int_1^6=\int_1^3+\int_3^6$, entonces $\int_3^6=${p}-(${q})$.`,r`Si $\int_{1}^{6} f=${p}$ y $\int_{1}^{3} f=${q}$, calcula:`);
+  return NUM('props',r`\int_{${a}}^{${a+3}} ${k}\,dx`,fr(3*k),r`La integral de una constante es el rectángulo: $${k}\cdot (${a+3}-${a})$.`,'Calcula:'); };
+G.sym=()=>{ const a=rnd(1,5), v=rnd(0,2);
+  if(v===0) return NUM('props',r`\int_{-${a}}^{${a}} x^{3}${dxs}`,fr(0),r`$x^3$ es impar: el área a la izquierda cancela la de la derecha.`,'Calcula (usa la simetría):');
+  if(v===1) return NUM('props',r`\int_{-${a}}^{${a}} x^{2}${dxs}`,fr(2*a**3,3),r`$x^2$ es par: $2\int_0^{${a}}x^2\,dx=\frac{${2*a**3}}{3}$.`,'Calcula (usa la simetría):');
+  return NUM('props',r`\int_{-${a}}^{${a}} (x^{5}+x)${dxs}`,fr(0),r`Suma de funciones impares en un intervalo simétrico: da $0$.`,'Calcula (usa la simetría):'); };
+
+/* ===== U3 · Métodos ===== */
+const U=[
+  {f:r`\int x\,e^{x^{2}}\,dx`,u:r`x^{2}`,w:[r`e^{x^{2}}`,r`x`,r`x\,e^{x^{2}}`]},
+  {f:r`\int \frac{\cos x}{1+\sin x}\,dx`,u:r`1+\sin x`,w:[r`\cos x`,r`\sin x`,r`\frac{\cos x}{1+\sin x}`]},
+  {f:r`\int x\sqrt{x^{2}+4}\,dx`,u:r`x^{2}+4`,w:[r`\sqrt{x^{2}+4}`,r`x`,r`x^{2}`]},
+  {f:r`\int \frac{(\ln x)^{3}}{x}\,dx`,u:r`\ln x`,w:[r`x`,r`(\ln x)^{3}`,r`\frac{1}{x}`]},
+  {f:r`\int \sin^{4}x\cos x\,dx`,u:r`\sin x`,w:[r`\cos x`,r`\sin^{4}x`,r`x`]},
+  {f:r`\int \frac{x^{2}}{x^{3}+1}\,dx`,u:r`x^{3}+1`,w:[r`x^{2}`,r`x^{3}`,r`\frac{1}{x^{3}+1}`]}];
+G.whichU=()=>{ const it=pick(U); return MC('sust',it.f,it.u,it.w,r`Conviene tomar como $u$ la expresión cuya derivada aparece (salvo constante) en el integrando.`,'¿Qué sustitución u conviene?'); };
+G.subs=()=>{ const k=rnd(0,2), a=rnd(2,7);
+  if(k===0) return MC('sust',r`\int \cos(${a}x)${dxs}`,r`\frac{\sin(${a}x)}{${a}}+C`,[r`${a}\sin(${a}x)+C`,r`-\frac{\sin(${a}x)}{${a}}+C`,r`\sin(${a}x)+C`],r`Sea $u=${a}x$, $du=${a}\,dx$; por eso se divide entre $${a}$.`);
+  if(k===1) return MC('sust',r`\int e^{${a}x}${dxs}`,r`\frac{e^{${a}x}}{${a}}+C`,[r`${a}e^{${a}x}+C`,r`e^{${a}x}+C`,r`\frac{e^{${a}x}}{${a+1}}+C`],r`Sea $u=${a}x$, $du=${a}\,dx$.`);
+  const b=rnd(1,6), n=rnd(2,5), L=`${a}x+${b}`;
+  return MC('sust',r`\int (${L})^{${n}}${dxs}`,r`\frac{(${L})^{${n+1}}}{${a*(n+1)}}+C`,[r`\frac{(${L})^{${n+1}}}{${n+1}}+C`,r`(${L})^{${n+1}}+C`,r`${a*n}(${L})^{${n-1}}+C`],r`Sea $u=${L}$, $du=${a}\,dx$: queda $\frac{1}{${a}}\int u^{${n}}du$.`); };
+G.subsPow=()=>{ const k=rnd(1,5), c=rnd(1,6), n=rnd(2,5), K=fr(k,2*(n+1));
+  return MC('sust',r`\int ${k===1?'':k}x(x^{2}+${c})^{${n}}${dxs}`,r`${cf(K)}(x^{2}+${c})^{${n+1}}+C`,
+    [r`${cf(fr(k,n+1))}(x^{2}+${c})^{${n+1}}+C`,r`${cf(K)}(x^{2}+${c})^{${n}}+C`,r`${cf(fr(k*2,n+1))}(x^{2}+${c})^{${n+1}}+C`],
+    r`Sea $u=x^2+${c}$, $du=2x\,dx$, así que $x\,dx=\frac{du}{2}$.`,null,{f:x=>k*x*(x*x+c)**n,F:x=>k/(2*(n+1))*(x*x+c)**(n+1)}); };
+G.subsExp=()=>{ const m=rnd(2,4), k=rnd(1,6), K=fr(k,m);
+  return MC('sust',r`\int ${k===1?'':k}${xp(m-1)}e^{x^{${m}}}${dxs}`,r`${cf(K)}e^{x^{${m}}}+C`,
+    [r`${k===1?'':k}e^{x^{${m}}}+C`,r`${cf(fr(k*m))}e^{x^{${m}}}+C`,r`${cf(K)}e^{x^{${m-1}}}+C`].map(s=>s.replace('x^{1}','x')),
+    r`Sea $u=x^{${m}}$, $du=${m}x^{${m-1}}dx$.`,null,{f:x=>k*x**(m-1)*Math.exp(x**m),F:x=>k/m*Math.exp(x**m),dom:[0.2,1]}); };
+G.subsLn=()=>{ const m=rnd(2,4), k=rnd(1,6), c=rnd(1,7), K=fr(k,m);
+  return MC('sust',r`\int \frac{${k===1?'':k}${xp(m-1)}}{x^{${m}}+${c}}${dxs}`,r`${cf(K)}\ln|x^{${m}}+${c}|+C`,
+    [r`${k===1?'':k}\ln|x^{${m}}+${c}|+C`,r`${cf(K)}\ln|x|+C`,r`${cf(K)}\frac{1}{x^{${m}}+${c}}+C`],
+    r`Sea $u=x^{${m}}+${c}$; el numerador es, salvo constante, $du$: la integral es $\frac{${k}}{${m}}\ln|u|$.`,null,{f:x=>k*x**(m-1)/(x**m+c),F:x=>k/m*Math.log(x**m+c),dom:[0.2,2]}); };
+G.subsRoot=()=>{ const m=rnd(2,4), c=rnd(1,8), K=fr(2,3*m);
+  return MC('sust',r`\int ${xp(m-1)}\sqrt{x^{${m}}+${c}}${dxs}`,r`${cf(K)}(x^{${m}}+${c})^{3/2}+C`,
+    [r`${cf(fr(2,3))}(x^{${m}}+${c})^{3/2}+C`,r`${cf(fr(3*m,2))}(x^{${m}}+${c})^{3/2}+C`,r`${cf(K)}(x^{${m}}+${c})^{1/2}+C`].map(s=>s.replace('x^{1}','x')),
+    r`Sea $u=x^{${m}}+${c}$, $du=${m}x^{${m-1}}dx$: queda $\frac{1}{${m}}\int u^{1/2}du$.`,null,{f:x=>x**(m-1)*Math.sqrt(x**m+c),F:x=>2/(3*m)*(x**m+c)**1.5}); };
+G.subsTrig=()=>{ const n=rnd(2,6), v=rnd(0,2);
+  if(v===0) return MC('sust',r`\int \sin^{${n}}x\cos x${dxs}`,r`\frac{\sin^{${n+1}}x}{${n+1}}+C`,[r`\frac{\cos^{${n+1}}x}{${n+1}}+C`,r`-\frac{\sin^{${n+1}}x}{${n+1}}+C`,r`\sin^{${n+1}}x+C`],r`Sea $u=\sin x$, $du=\cos x\,dx$.`,null,{f:x=>Math.sin(x)**n*Math.cos(x),F:x=>Math.sin(x)**(n+1)/(n+1)});
+  if(v===1) return MC('sust',r`\int \cos^{${n}}x\sin x${dxs}`,r`-\frac{\cos^{${n+1}}x}{${n+1}}+C`,[r`\frac{\cos^{${n+1}}x}{${n+1}}+C`,r`-\frac{\sin^{${n+1}}x}{${n+1}}+C`,r`-\cos^{${n+1}}x+C`],r`Sea $u=\cos x$, $du=-\sin x\,dx$.`,null,{f:x=>Math.cos(x)**n*Math.sin(x),F:x=>-(Math.cos(x)**(n+1))/(n+1)});
+  return MC('sust',r`\int \tan^{${n}}x\sec^{2}x${dxs}`,r`\frac{\tan^{${n+1}}x}{${n+1}}+C`,[r`\frac{\sec^{${n+1}}x}{${n+1}}+C`,r`\tan^{${n+1}}x+C`,r`-\frac{\tan^{${n+1}}x}{${n+1}}+C`],r`Sea $u=\tan x$, $du=\sec^2x\,dx$.`,null,{f:x=>Math.tan(x)**n/Math.cos(x)**2,F:x=>Math.tan(x)**(n+1)/(n+1),dom:[0.2,1]}); };
+G.subsLog=()=>{ const n=rnd(2,5);
+  if(Math.random()<.6) return MC('sust',r`\int \frac{(\ln x)^{${n}}}{x}${dxs}`,r`\frac{(\ln x)^{${n+1}}}{${n+1}}+C`,[r`\frac{(\ln x)^{${n+1}}}{x}+C`,r`(\ln x)^{${n+1}}+C`,r`\frac{(\ln x)^{${n}}}{${n}}+C`],r`Sea $u=\ln x$, $du=\frac{dx}{x}$.`,null,{f:x=>Math.log(x)**n/x,F:x=>Math.log(x)**(n+1)/(n+1),dom:[1.5,3]});
+  return MC('sust',r`\int \frac{1}{x\ln x}${dxs}`,r`\ln|\ln x|+C`,[r`\ln|x|+C`,r`\frac{1}{(\ln x)^{2}}+C`,r`\ln x\cdot\ln|x|+C`],r`Sea $u=\ln x$, $du=\frac{dx}{x}$: queda $\int\frac{du}{u}$.`,null,{f:x=>1/(x*Math.log(x)),F:x=>Math.log(Math.abs(Math.log(x))),dom:[1.5,3]}); };
+
+G.partsX=()=>{ const a=rnd(2,5), k=rnd(0,2);
+  if(k===0) return MC('partes',r`\int x\,e^{${a}x}${dxs}`,r`\frac{(${a}x-1)e^{${a}x}}{${a*a}}+C`,[r`\frac{(${a}x+1)e^{${a}x}}{${a*a}}+C`,r`\frac{xe^{${a}x}}{${a}}+C`,r`\frac{(${a}x-1)e^{${a}x}}{${a}}+C`],r`Toma $u=x$, $dv=e^{${a}x}dx$, así $v=\frac{e^{${a}x}}{${a}}$.`,null,{f:x=>x*Math.exp(a*x),F:x=>(a*x-1)*Math.exp(a*x)/(a*a),dom:[0.1,0.8]});
+  if(k===1) return MC('partes',r`\int x\cos(${a}x)${dxs}`,r`\frac{x\sin(${a}x)}{${a}}+\frac{\cos(${a}x)}{${a*a}}+C`,[r`\frac{x\sin(${a}x)}{${a}}-\frac{\cos(${a}x)}{${a*a}}+C`,r`\frac{x\sin(${a}x)}{${a}}+\frac{\cos(${a}x)}{${a}}+C`,r`-\frac{x\sin(${a}x)}{${a}}+\frac{\cos(${a}x)}{${a*a}}+C`],r`Toma $u=x$, $dv=\cos(${a}x)dx$.`,null,{f:x=>x*Math.cos(a*x),F:x=>x*Math.sin(a*x)/a+Math.cos(a*x)/(a*a)});
+  return MC('partes',r`\int x\sin(${a}x)${dxs}`,r`-\frac{x\cos(${a}x)}{${a}}+\frac{\sin(${a}x)}{${a*a}}+C`,[r`\frac{x\cos(${a}x)}{${a}}+\frac{\sin(${a}x)}{${a*a}}+C`,r`-\frac{x\cos(${a}x)}{${a}}-\frac{\sin(${a}x)}{${a*a}}+C`,r`-\frac{x\cos(${a}x)}{${a}}+\frac{\sin(${a}x)}{${a}}+C`],r`Toma $u=x$, $dv=\sin(${a}x)dx$, así $v=-\frac{\cos(${a}x)}{${a}}$.`,null,{f:x=>x*Math.sin(a*x),F:x=>-x*Math.cos(a*x)/a+Math.sin(a*x)/(a*a)}); };
+G.partsLn=()=>{ const n=rnd(1,4), m=n+1;
+  return MC('partes',r`\int ${xp(n)}\ln x${dxs}`,r`\frac{x^{${m}}}{${m}}\ln x-\frac{x^{${m}}}{${m*m}}+C`,
+    [r`\frac{x^{${m}}}{${m}}\ln x+\frac{x^{${m}}}{${m*m}}+C`,r`\frac{x^{${m}}}{${m}}\ln x-\frac{x^{${m}}}{${m}}+C`,r`\frac{x^{${m}}}{${m}}\cdot\frac{1}{x}+C`],
+    r`Toma $u=\ln x$, $dv=x^{${n}}dx$, así $v=\frac{x^{${m}}}{${m}}$ y $du=\frac{dx}{x}$.`,null,{f:x=>x**n*Math.log(x),F:x=>x**m/m*Math.log(x)-x**m/(m*m),dom:[1,3]}); };
+G.partsX2=()=>{ const a=pick([1,2,3]);
+  const e=a===1?r`e^{x}`:r`e^{${a}x}`;
+  const ok=a===1?r`e^{x}(x^{2}-2x+2)+C`:r`${e}\left(\frac{x^{2}}{${a}}-\frac{2x}{${a*a}}+\frac{2}{${a**3}}\right)+C`;
+  const w=a===1?[r`e^{x}(x^{2}+2x+2)+C`,r`e^{x}(x^{2}-2x)+C`,r`\frac{x^{3}}{3}e^{x}+C`]
+    :[r`${e}\left(\frac{x^{2}}{${a}}+\frac{2x}{${a*a}}+\frac{2}{${a**3}}\right)+C`,r`${e}\left(\frac{x^{2}}{${a}}-\frac{2x}{${a}}+\frac{2}{${a}}\right)+C`,r`${e}\left(x^{2}-2x+2\right)+C`];
+  return MC('partes',r`\int x^{2}${e}${dxs}`,ok,w,r`Se aplica partes dos veces: primero $u=x^2$, luego $u=x$.`,null,{f:x=>x*x*Math.exp(a*x),F:x=>Math.exp(a*x)*(x*x/a-2*x/(a*a)+2/(a**3)),dom:[0.1,0.8]}); };
+G.partsCyc=()=>{ if(Math.random()<.5) return MC('partes',r`\int e^{x}\sin x${dxs}`,r`\frac{e^{x}(\sin x-\cos x)}{2}+C`,[r`\frac{e^{x}(\sin x+\cos x)}{2}+C`,r`e^{x}(\sin x-\cos x)+C`,r`\frac{e^{x}\sin x}{2}+C`],r`Se integra por partes dos veces y reaparece la misma integral: se despeja.`,null,{f:x=>Math.exp(x)*Math.sin(x),F:x=>Math.exp(x)*(Math.sin(x)-Math.cos(x))/2});
+  return MC('partes',r`\int e^{x}\cos x${dxs}`,r`\frac{e^{x}(\sin x+\cos x)}{2}+C`,[r`\frac{e^{x}(\sin x-\cos x)}{2}+C`,r`e^{x}(\sin x+\cos x)+C`,r`\frac{e^{x}\cos x}{2}+C`],r`Se integra por partes dos veces y reaparece la misma integral: se despeja.`,null,{f:x=>Math.exp(x)*Math.cos(x),F:x=>Math.exp(x)*(Math.sin(x)+Math.cos(x))/2}); };
+G.partsInv=()=>{ if(Math.random()<.5) return MC('partes',r`\int \arctan x${dxs}`,r`x\arctan x-\frac{1}{2}\ln(1+x^{2})+C`,[r`x\arctan x+\frac{1}{2}\ln(1+x^{2})+C`,r`x\arctan x-\ln(1+x^{2})+C`,r`\frac{1}{1+x^{2}}+C`],r`Toma $u=\arctan x$, $dv=dx$; luego se resuelve $\int\frac{x}{1+x^2}dx$ por sustitución.`,null,{f:x=>Math.atan(x),F:x=>x*Math.atan(x)-Math.log(1+x*x)/2});
+  return MC('partes',r`\int \arcsin x${dxs}`,r`x\arcsin x+\sqrt{1-x^{2}}+C`,[r`x\arcsin x-\sqrt{1-x^{2}}+C`,r`x\arcsin x+\frac{1}{\sqrt{1-x^{2}}}+C`,r`\frac{1}{\sqrt{1-x^{2}}}+C`],r`Toma $u=\arcsin x$, $dv=dx$; luego sustitución con $u=1-x^2$.`,null,{f:x=>Math.asin(x),F:x=>x*Math.asin(x)+Math.sqrt(1-x*x),dom:[0.1,0.8]}); };
+const LI=[
+  {f:r`\int x\,e^{x}\,dx`,u:r`u=x,\ dv=e^{x}dx`,w:[r`u=e^{x},\ dv=x\,dx`,r`u=x\,e^{x},\ dv=dx`,r`u=1,\ dv=x\,e^{x}dx`]},
+  {f:r`\int x\ln x\,dx`,u:r`u=\ln x,\ dv=x\,dx`,w:[r`u=x,\ dv=\ln x\,dx`,r`u=x\ln x,\ dv=dx`,r`u=1,\ dv=x\ln x\,dx`]},
+  {f:r`\int x\sin x\,dx`,u:r`u=x,\ dv=\sin x\,dx`,w:[r`u=\sin x,\ dv=x\,dx`,r`u=x\sin x,\ dv=dx`,r`u=\cos x,\ dv=x\,dx`]},
+  {f:r`\int \ln x\,dx`,u:r`u=\ln x,\ dv=dx`,w:[r`u=x,\ dv=\ln x\,dx`,r`u=1,\ dv=\ln x\,dx`,r`u=\frac{1}{x},\ dv=dx`]},
+  {f:r`\int x\arctan x\,dx`,u:r`u=\arctan x,\ dv=x\,dx`,w:[r`u=x,\ dv=\arctan x\,dx`,r`u=x\arctan x,\ dv=dx`,r`u=\frac{1}{1+x^{2}},\ dv=x\,dx`]}];
+G.whichUV=()=>{ const it=pick(LI); return MC('partes',it.f,it.u,it.w,r`Regla LIATE: se elige como $u$ lo que aparece primero en Logarítmica, Inversa trig., Algebraica, Trigonométrica, Exponencial.`,'¿Qué elección de u y dv conviene?'); };
+
+/* sustitución trigonométrica (de verdad: x = a·senθ, a·tanθ, a·secθ) */
+G.ts=()=>{ const a=rnd(2,6), A=a*a, v=rnd(0,8), sq=(s)=>r`\sqrt{${s}}`, S=sq(`${A}-x^{2}`), T=sq(`x^{2}+${A}`), Q=sq(`x^{2}-${A}`);
+  switch(v){
+  case 0: return MC('trigsub',r`\int \frac{1}{x^{2}+${A}}${dxs}`,r`\frac{1}{${a}}\arctan\frac{x}{${a}}+C`,[r`\arctan\frac{x}{${a}}+C`,r`\frac{1}{${A}}\arctan\frac{x}{${a}}+C`,r`\frac{1}{${a}}\ln|x^{2}+${A}|+C`],r`Con $x=${a}\tan\theta$: $dx=${a}\sec^2\theta\,d\theta$ y $x^2+${A}=${A}\sec^2\theta$; queda $\frac{1}{${a}}\int d\theta$.`,null,{f:x=>1/(x*x+A),F:x=>Math.atan(x/a)/a});
+  case 1: return MC('trigsub',r`\int \frac{1}{${S}}${dxs}`,r`\arcsin\frac{x}{${a}}+C`,[r`\arcsin x+C`,r`\frac{1}{${a}}\arcsin\frac{x}{${a}}+C`,r`\arctan\frac{x}{${a}}+C`],r`Con $x=${a}\sin\theta$: $${S}=${a}\cos\theta$ y $dx=${a}\cos\theta\,d\theta$; queda $\int d\theta=\theta$.`,null,{f:x=>1/Math.sqrt(A-x*x),F:x=>Math.asin(x/a),dom:[0.1,a-0.5]});
+  case 2: return MC('trigsub',r`\int ${S}${dxs}`,r`\frac{x${S}}{2}+\frac{${A}}{2}\arcsin\frac{x}{${a}}+C`,[r`\frac{x${S}}{2}-\frac{${A}}{2}\arcsin\frac{x}{${a}}+C`,r`x${S}+${A}\arcsin\frac{x}{${a}}+C`,r`\frac{(${A}-x^{2})^{3/2}}{3}+C`],r`Con $x=${a}\sin\theta$: $\int ${A}\cos^2\theta\,d\theta$, que se resuelve con $\cos^2\theta=\frac{1+\cos2\theta}{2}$.`,null,{f:x=>Math.sqrt(A-x*x),F:x=>x*Math.sqrt(A-x*x)/2+A/2*Math.asin(x/a),dom:[0.1,a-0.5]});
+  case 3: return MC('trigsub',r`\int \frac{1}{x^{2}${S}}${dxs}`,r`-\frac{${S}}{${A}x}+C`,[r`\frac{${S}}{${A}x}+C`,r`-\frac{${S}}{${a}x}+C`,r`-\frac{x}{${A}${S}}+C`],r`Con $x=${a}\sin\theta$ queda $\frac{1}{${A}}\int\csc^2\theta\,d\theta=-\frac{\cot\theta}{${A}}$.`,null,{f:x=>1/(x*x*Math.sqrt(A-x*x)),F:x=>-Math.sqrt(A-x*x)/(A*x),dom:[0.2,a-0.5]});
+  case 4: return MC('trigsub',r`\int \frac{1}{(x^{2}+${A})^{3/2}}${dxs}`,r`\frac{x}{${A}${T}}+C`,[r`\frac{x}{${a}${T}}+C`,r`-\frac{x}{${A}${T}}+C`,r`\frac{1}{${A}(x^{2}+${A})^{1/2}}+C`],r`Con $x=${a}\tan\theta$: $(x^2+${A})^{3/2}=${a**3}\sec^3\theta$; queda $\frac{1}{${A}}\int\cos\theta\,d\theta=\frac{\sin\theta}{${A}}$.`,null,{f:x=>(x*x+A)**-1.5,F:x=>x/(A*Math.sqrt(x*x+A))});
+  case 5: return MC('trigsub',r`\int \frac{1}{${Q}}${dxs}`,r`\ln\left|x+${Q}\right|+C`,[r`\arcsin\frac{x}{${a}}+C`,r`\frac{1}{${a}}\ln\left|x+${Q}\right|+C`,r`${Q}+C`],r`Con $x=${a}\sec\theta$: $${Q}=${a}\tan\theta$ y $dx=${a}\sec\theta\tan\theta\,d\theta$; queda $\int\sec\theta\,d\theta$.`,null,{f:x=>1/Math.sqrt(x*x-A),F:x=>Math.log(Math.abs(x+Math.sqrt(x*x-A))),dom:[a+0.5,a+3]});
+  case 6: return MC('trigsub',r`\int \frac{x^{2}}{${S}}${dxs}`,r`\frac{${A}}{2}\arcsin\frac{x}{${a}}-\frac{x${S}}{2}+C`,[r`\frac{${A}}{2}\arcsin\frac{x}{${a}}+\frac{x${S}}{2}+C`,r`${A}\arcsin\frac{x}{${a}}-x${S}+C`,r`-${S}+C`],r`Con $x=${a}\sin\theta$ queda $${A}\int\sin^2\theta\,d\theta$.`,null,{f:x=>x*x/Math.sqrt(A-x*x),F:x=>A/2*Math.asin(x/a)-x*Math.sqrt(A-x*x)/2,dom:[0.1,a-0.5]});
+  case 7: return MC('trigsub',r`\int \frac{1}{x${Q}}${dxs}`,r`\frac{1}{${a}}\operatorname{arcsec}\frac{|x|}{${a}}+C`,[r`\operatorname{arcsec}\frac{|x|}{${a}}+C`,r`\frac{1}{${a}}\arcsin\frac{x}{${a}}+C`,r`\frac{1}{${a}}\arctan\frac{x}{${a}}+C`],r`Con $x=${a}\sec\theta$: $dx=${a}\sec\theta\tan\theta\,d\theta$ y $${Q}=${a}\tan\theta$; queda $\frac{1}{${a}}\int d\theta$.`,null,{f:x=>1/(x*Math.sqrt(x*x-A)),F:x=>Math.acos(a/x)/a,dom:[a+0.5,a+3]});
+  default: return MC('trigsub',r`\int ${T}${dxs}`,r`\frac{x${T}}{2}+\frac{${A}}{2}\ln\left|x+${T}\right|+C`,[r`\frac{x${T}}{2}-\frac{${A}}{2}\ln\left|x+${T}\right|+C`,r`\frac{(x^{2}+${A})^{3/2}}{3}+C`,r`x${T}+${A}\ln\left|x+${T}\right|+C`],r`Con $x=${a}\tan\theta$: $${T}=${a}\sec\theta$ y $dx=${a}\sec^2\theta\,d\theta$; queda $${A}\int\sec^3\theta\,d\theta$.`,null,{f:x=>Math.sqrt(x*x+A),F:x=>x*Math.sqrt(x*x+A)/2+A/2*Math.log(x+Math.sqrt(x*x+A))}); } };
+G.tsPick=()=>{ const a=rnd(2,7), A=a*a, v=rnd(0,2), ID=[r`1-\sin^2\theta=\cos^2\theta`,r`1+\tan^2\theta=\sec^2\theta`,r`\sec^2\theta-1=\tan^2\theta`],
+  forms=[[r`\sqrt{${A}-x^{2}}`,r`x=${a}\sin\theta`],[r`\sqrt{x^{2}+${A}}`,r`x=${a}\tan\theta`],[r`\sqrt{x^{2}-${A}}`,r`x=${a}\sec\theta`]], all=forms.map(f=>f[1]);
+  return MC('trigsub',r`\int \frac{1}{x^{2}${forms[v][0]}}${dxs}`,forms[v][1],[...all.filter((_,i)=>i!==v),r`u=x^{2}`],
+    r`La forma $${forms[v][0]}$ se simplifica con ${['seno','tangente','secante'][v]}: $${ID[v]}$.`,'¿Qué sustitución trigonométrica conviene?'); };
+G.tsSimp=()=>{ const a=rnd(2,7), v=rnd(0,2), d=[[`x=${a}\\sin\\theta`,r`\sqrt{${a*a}-x^{2}}`,`${a}\\cos\\theta`,[`${a}\\sin\\theta`,`${a}\\sec\\theta`,`${a}\\tan\\theta`]],
+  [`x=${a}\\tan\\theta`,r`\sqrt{x^{2}+${a*a}}`,`${a}\\sec\\theta`,[`${a}\\tan\\theta`,`${a}\\cos\\theta`,`${a}\\sin\\theta`]],
+  [`x=${a}\\sec\\theta`,r`\sqrt{x^{2}-${a*a}}`,`${a}\\tan\\theta`,[`${a}\\sec\\theta`,`${a}\\sin\\theta`,`${a}\\cos\\theta`]]][v];
+  return MC('trigsub',`${d[0]}\\ \\Rightarrow\\ ${d[1]}`,d[2],d[3],r`Se usa una identidad pitagórica para eliminar la raíz.`,'Al sustituir, la raíz se convierte en:'); };
+G.tsDx=()=>{ const a=rnd(2,7), v=rnd(0,2), d=[[`x=${a}\\sin\\theta`,`${a}\\cos\\theta\\,d\\theta`,[`${a}\\sin\\theta\\,d\\theta`,`-${a}\\cos\\theta\\,d\\theta`,`\\cos\\theta\\,d\\theta`]],
+  [`x=${a}\\tan\\theta`,`${a}\\sec^{2}\\theta\\,d\\theta`,[`${a}\\sec\\theta\\,d\\theta`,`${a}\\cos^{2}\\theta\\,d\\theta`,`\\sec^{2}\\theta\\,d\\theta`]],
+  [`x=${a}\\sec\\theta`,`${a}\\sec\\theta\\tan\\theta\\,d\\theta`,[`${a}\\sec^{2}\\theta\\,d\\theta`,`${a}\\tan\\theta\\,d\\theta`,`\\sec\\theta\\tan\\theta\\,d\\theta`]]][v];
+  return MC('trigsub',d[0],d[1],d[2],r`Se deriva la sustitución respecto de $\theta$.`,'Entonces dx es:'); };
+G.tsDef=()=>{ const a=rnd(2,6);
+  if(Math.random()<.5) return MC('trigsub',r`\int_0^{${a}} \sqrt{${a*a}-x^{2}}${dxs}`,r`\frac{${a*a}\pi}{4}`,[r`\frac{${a*a}\pi}{2}`,r`${a*a}\pi`,r`\frac{${a}\pi}{4}`],r`Con $x=${a}\sin\theta$ ($0\le\theta\le\pi/2$): $${a*a}\int_0^{\pi/2}\cos^2\theta\,d\theta=${a*a}\cdot\frac{\pi}{4}$. Es un cuarto de círculo de radio $${a}$.`);
+  return MC('trigsub',r`\int_0^{${a}} \frac{1}{x^{2}+${a*a}}${dxs}`,r`\frac{\pi}{${4*a}}`,[r`\frac{\pi}{${a}}`,r`\frac{\pi}{${2*a}}`,r`\frac{\pi}{${4*a*a}}`],r`Con $x=${a}\tan\theta$: $\frac{1}{${a}}\int_0^{\pi/4}d\theta=\frac{\pi}{${4*a}}$.`); };
+
+/* fracciones parciales */
+const lnT=([n,d],L,first)=>{ if(!n) return ''; const neg=n<0, c=cf([Math.abs(n),d]); return (neg?'-':(first?'':'+'))+c+r`\ln|${L}|`; };
+G.partial=()=>{ let a,b; do{ a=rnd(-4,4); b=rnd(-4,4); }while(!a||!b||a===b);
+  const c=fr(1,b-a), cs=cf(c), R=(u,v)=>r`${cs}\ln\left|\frac{${lin(u)}}{${lin(v)}}\right|+C`;
+  return MC('fracc',r`\int \frac{1}{(${lin(a)})(${lin(b)})}${dxs}`,R(a,b),[R(b,a),r`\ln\left|(${lin(a)})(${lin(b)})\right|+C`,r`${cf(fr(1,Math.abs(b-a)+1))}\ln\left|\frac{${lin(a)}}{${lin(b)}}\right|+C`],
+    r`$\frac{1}{(${lin(a)})(${lin(b)})}=\frac{1}{${b-a}}\left(\frac{1}{${lin(a)}}-\frac{1}{${lin(b)}}\right)$.`,null,
+    {f:x=>1/((x+a)*(x+b)),F:x=>Math.log(Math.abs((x+a)/(x+b)))/(b-a),dom:[Math.max(-a,-b)+0.5,Math.max(-a,-b)+3]}); };
+G.partialN=()=>{ let a,b,p,q,A,B; do{ a=rnd(-4,4); b=rnd(-4,4); p=rnd(1,3); q=rnd(1,8)*sgn(); A=fr(q-p*a,b-a); B=fr(q-p*b,a-b); }while(!a||!b||a===b||!A[0]||!B[0]);
+  const f=r`\frac{${poly([[fr(p),1],[fr(q),0]])}}{(${lin(a)})(${lin(b)})}`, ok=lnT(A,lin(a),true)+lnT(B,lin(b),false)+'+C';
+  return MC('fracc',r`\int ${f}${dxs}`,ok,[lnT(B,lin(a),true)+lnT(A,lin(b),false)+'+C',lnT(fr(-A[0],A[1]),lin(a),true)+lnT(B,lin(b),false)+'+C',lnT(fr(A[0]*(b-a),A[1]),lin(a),true)+lnT(fr(B[0]*(b-a),B[1]),lin(b),false)+'+C'],
+    r`Descompón $${f}=\frac{A}{${lin(a)}}+\frac{B}{${lin(b)}}$ con $A=${ansTex(A)}$ y $B=${ansTex(B)}$.`,null,
+    {f:x=>(p*x+q)/((x+a)*(x+b)),F:x=>A[0]/A[1]*Math.log(Math.abs(x+a))+B[0]/B[1]*Math.log(Math.abs(x+b)),dom:[Math.max(-a,-b)+0.5,Math.max(-a,-b)+3]}); };
+G.partialX=()=>{ let a,b; do{ a=rnd(1,6); b=rnd(1,6); }while(a===b);
+  const c=fr(1,b-a), cs=cf(c), R=(u,v)=>r`${cs}\ln\left|\frac{x+${u}}{x+${v}}\right|+C`;
+  return MC('fracc',r`\int \frac{1}{${poly([[fr(1),2],[fr(a+b),1],[fr(a*b),0]])}}${dxs}`,R(a,b),[R(b,a),r`\ln\left|x^{2}+${a+b}x+${a*b}\right|+C`,r`${cf(fr(1,a+b))}\ln\left|x^{2}+${a+b}x+${a*b}\right|+C`],
+    r`Factoriza: $x^2+${a+b}x+${a*b}=(x+${a})(x+${b})$ y descompón en fracciones parciales.`,null,{f:x=>1/(x*x+(a+b)*x+a*b),F:x=>Math.log(Math.abs((x+a)/(x+b)))/(b-a),dom:[0.5,3]}); };
+G.partialA=()=>{ const a=rnd(2,7), K=fr(1,2*a);
+  return MC('fracc',r`\int \frac{1}{x^{2}-${a*a}}${dxs}`,r`${cf(K)}\ln\left|\frac{x-${a}}{x+${a}}\right|+C`,[r`${cf(K)}\ln\left|\frac{x+${a}}{x-${a}}\right|+C`,r`${cf(fr(1,a))}\ln\left|\frac{x-${a}}{x+${a}}\right|+C`,r`${cf(K)}\ln|x^{2}-${a*a}|+C`],
+    r`$\frac{1}{x^2-${a*a}}=\frac{1}{${2*a}}\left(\frac{1}{x-${a}}-\frac{1}{x+${a}}\right)$.`,null,{f:x=>1/(x*x-a*a),F:x=>Math.log(Math.abs((x-a)/(x+a)))/(2*a),dom:[a+0.5,a+3]}); };
+G.partialZ=()=>{ const a=rnd(1,7), c=fr(1,a);
+  return MC('fracc',r`\int \frac{1}{x(x+${a})}${dxs}`,r`${cf(c)}\ln\left|\frac{x}{x+${a}}\right|+C`,[r`${cf(c)}\ln\left|\frac{x+${a}}{x}\right|+C`,r`\ln\left|\frac{x}{x+${a}}\right|+C`,r`${cf(c)}\ln|x(x+${a})|+C`],
+    r`$\frac{1}{x(x+${a})}=\frac{1}{${a}}\left(\frac{1}{x}-\frac{1}{x+${a}}\right)$.`,null,{f:x=>1/(x*(x+a)),F:x=>Math.log(Math.abs(x/(x+a)))/a,dom:[0.5,3]}); };
+G.partialDef=()=>{ const q=rnd(2,6);
+  return MC('fracc',r`\int_{1}^{${q}} \frac{1}{x(x+1)}${dxs}`,r`\ln\frac{${2*q}}{${q+1}}`,[r`\ln\frac{${q+1}}{${2*q}}`,r`\ln\frac{${q}}{${q+1}}`,r`\frac{${2*q}}{${q+1}}`],
+    r`La antiderivada es $\ln\left|\frac{x}{x+1}\right|$: en $${q}$ vale $\ln\frac{${q}}{${q+1}}$ y en $1$ vale $\ln\frac{1}{2}$; se restan.`); };
+const FORMS=(a,b)=>[
+  {f:r`\frac{1}{(x+${a})(x+${b})}`,o:r`\frac{A}{x+${a}}+\frac{B}{x+${b}}`,w:[r`\frac{A}{(x+${a})(x+${b})}`,r`\frac{Ax+B}{(x+${a})(x+${b})}`,r`\frac{A}{x+${a}}\cdot\frac{B}{x+${b}}`]},
+  {f:r`\frac{1}{(x+${a})^{2}}\cdot\frac{x}{1}`,o:r`\frac{A}{x+${a}}+\frac{B}{(x+${a})^{2}}`,w:[r`\frac{A}{(x+${a})^{2}}`,r`\frac{A}{x+${a}}+\frac{B}{x+${a}}`,r`\frac{Ax+B}{(x+${a})^{2}}`]},
+  {f:r`\frac{1}{x(x^{2}+${b})}`,o:r`\frac{A}{x}+\frac{Bx+C}{x^{2}+${b}}`,w:[r`\frac{A}{x}+\frac{B}{x^{2}+${b}}`,r`\frac{A}{x}+\frac{B}{x}+\frac{C}{x^{2}+${b}}`,r`\frac{Ax+B}{x(x^{2}+${b})}`]}];
+G.partialForm=()=>{ const a=rnd(1,5), b=rnd(a+1,8), it=pick(FORMS(a,b)); return MC('fracc',it.f,it.o,it.w,r`Cada factor lineal lleva una constante; el repetido lleva una potencia por término; el cuadrático irreducible lleva $Bx+C$.`,'¿Qué forma tiene la descomposición en fracciones parciales?'); };
+
+/* ===== U4 · Aplicaciones ===== */
+G.between=()=>{ const v=rnd(0,4);
+  if(v===0){ const a=rnd(2,6); return NUM('between',r`y=${a}x,\quad y=x^{2}`,fr(a**3,6),r`Se cortan en $x=0$ y $x=${a}$: $\int_0^{${a}}(${a}x-x^2)\,dx=\frac{${a**3}}{6}$.`,'Halla el área encerrada (exacta):'); }
+  if(v===1){ const k=rnd(1,4); return NUM('between',r`y=${k*k},\quad y=x^{2}`,fr(4*k**3,3),r`Se cortan en $x=\pm ${k}$: $\int_{-${k}}^{${k}}(${k*k}-x^2)\,dx=\frac{${4*k**3}}{3}$.`,'Halla el área encerrada (exacta):'); }
+  if(v===2){ const m=pick([3,5,7]), k=(m*m-1)/4; return NUM('between',r`y=x+${k},\quad y=x^{2}`,fr(m**3,6),r`Se cortan donde $x^2-x-${k}=0$, es decir $x=\frac{1\pm ${m}}{2}$: el ancho es $${m}$ y el área es $\frac{${m}^3}{6}$.`,'Halla el área encerrada (exacta):'); }
+  if(v===3){ const n=rnd(2,4); return NUM('between',r`y=x,\quad y=x^{${n}},\quad 0\le x\le 1`,fr(n-1,2*(n+1)),r`$\int_0^1(x-x^{${n}})\,dx=\frac{1}{2}-\frac{1}{${n+1}}$.`,'Halla el área encerrada (exacta):'); }
+  return NUM('between',r`y=\sqrt{x},\quad y=x^{2}`,fr(1,3),r`Se cortan en $0$ y $1$: $\int_0^1(\sqrt{x}-x^2)\,dx=\frac{2}{3}-\frac{1}{3}$.`,'Halla el área encerrada (exacta):'); };
+G.setupBetween=()=>{ const a=rnd(2,6), F=(i,j,hi)=>r`\int_0^{${hi}} (${i}-${j})${dxs}`;
+  return MC('between',r`y=${a}x,\quad y=x^{2}`,F(`${a}x`,'x^{2}',a),[F('x^{2}',`${a}x`,a),r`\int_0^{${a}} (${a}x+x^{2})${dxs}`,F(`${a}x`,'x^{2}',a*a)],
+    r`Entre $0$ y $${a}$ la recta está por encima de la parábola: se integra (superior $-$ inferior).`,'¿Qué integral da el área encerrada?'); };
+G.vol=()=>{ const v=rnd(0,5);
+  if(v===0){ const n=rnd(1,3), a=rnd(1,3), c=fr(a**(2*n+1),2*n+1); return MC('vol',r`y=${xp(n)},\quad 0\le x\le ${a}`,r`${ansTex(c)}\pi`,[r`${ansTex(fr(a**(2*n)))}\pi`,r`${ansTex(fr(a**(n+1),n+1))}\pi`,ansTex(c)],r`Discos: $V=\pi\int_0^{${a}} (${xp(n)})^2\,dx=\pi\int_0^{${a}} x^{${2*n}}\,dx$.`,'Volumen al girar alrededor del eje x:'); }
+  if(v===1){ const a=rnd(2,6); return MC('vol',r`y=\sqrt{x},\quad 0\le x\le ${a}`,r`${ansTex(fr(a*a,2))}\pi`,[r`${ansTex(fr(a*a))}\pi`,r`${ansTex(fr(a**3,3))}\pi`,r`${ansTex(fr(a,2))}\pi`],r`Discos: $V=\pi\int_0^{${a}}x\,dx=\pi\frac{${a}^2}{2}$.`,'Volumen al girar alrededor del eje x:'); }
+  if(v===2){ const k=rnd(1,4), h=rnd(1,4); return MC('vol',r`y=${k===1?'':k}x,\quad 0\le x\le ${h}`,r`${ansTex(fr(k*k*h**3,3))}\pi`,[r`${ansTex(fr(k*k*h**3))}\pi`,r`${ansTex(fr(k*h*h,2))}\pi`,r`${ansTex(fr(k*k*h**2,2))}\pi`],r`Es un cono: $V=\pi\int_0^{${h}}(${k}x)^2dx=\pi\frac{${k*k}\cdot ${h}^3}{3}$.`,'Volumen al girar alrededor del eje x:'); }
+  if(v===3){ const R=rnd(1,5); return MC('vol',r`y=\sqrt{${R*R}-x^{2}},\quad -${R}\le x\le ${R}`,r`${ansTex(fr(4*R**3,3))}\pi`,[r`${ansTex(fr(2*R**3,3))}\pi`,r`${ansTex(fr(4*R**2,3))}\pi`,r`${ansTex(fr(R**3,3))}\pi`],r`Es una esfera de radio $${R}$: $V=\pi\int_{-${R}}^{${R}}(${R*R}-x^2)dx=\frac{4}{3}\pi ${R}^3$.`,'Volumen al girar alrededor del eje x:'); }
+  if(v===4){ const a=rnd(1,4); return MC('vol',r`y=x^{2},\quad 0\le x\le ${a}`,r`${ansTex(fr(a**4,2))}\pi`,[r`${ansTex(fr(a**5,5))}\pi`,r`${ansTex(fr(a**4,4))}\pi`,r`${ansTex(fr(a**3,3))}\pi`],r`Capas cilíndricas: $V=2\pi\int_0^{${a}}x\cdot x^2\,dx=2\pi\frac{${a}^4}{4}$.`,'Volumen al girar alrededor del eje y:'); }
+  const n=rnd(2,4); return MC('vol',r`y=x,\quad y=x^{${n}},\quad 0\le x\le 1`,r`${ansTex(fr(2*n-2,3*(2*n+1)))}\pi`,[r`${ansTex(fr(1,3))}\pi`,r`${ansTex(fr(2*n+1-3,3*(2*n+1)))}\pi`,r`${ansTex(fr(n-1,2*(n+1)))}\pi`],
+    r`Arandelas: $V=\pi\int_0^1\left(x^2-x^{${2*n}}\right)dx=\pi\left(\frac{1}{3}-\frac{1}{${2*n+1}}\right)$.`,'Volumen al girar la región alrededor del eje x:'); };
+G.fis=()=>{ const v=rnd(0,6);
+  if(v===0){ const a=rnd(1,6), b=rnd(1,8), T=rnd(2,5); return NUM('fis',r`v(t)=${a}t+${b}\ \text{m/s},\quad 0\le t\le ${T}`,fadd(fr(a*T*T,2),fr(b*T)),r`Desplazamiento $=\int_0^{${T}}(${a}t+${b})\,dt$.`,'Calcula el desplazamiento en metros:'); }
+  if(v===1){ const k=rnd(2,9), d=rnd(1,4); return NUM('fis',r`F(x)=${k}x\ \text{N},\quad 0\le x\le ${d}\ \text{m}`,fr(k*d*d,2),r`Trabajo $=\int_0^{${d}} ${k}x\,dx=\frac{${k}\cdot ${d}^2}{2}$.`,'Calcula el trabajo en joules:'); }
+  if(v===2){ const b=rnd(2,6); return NUM('fis',r`f(x)=x^{2},\quad [0,${b}]`,fr(b*b,3),r`Promedio $=\frac{1}{${b}}\int_0^{${b}}x^2\,dx=\frac{1}{${b}}\cdot\frac{${b**3}}{3}$.`,'Calcula el valor promedio de f:'); }
+  if(v===3){ const k=rnd(1,6), v0=rnd(1,9), T=rnd(2,5); return NUM('fis',r`a(t)=${k}t\ \text{m/s}^2,\quad v(0)=${v0}`,fadd(fr(v0),fr(k*T*T,2)),r`$v(t)=\frac{${k}}{2}t^2+${v0}$; se evalúa en $t=${T}$.`,`Calcula v(${T}) en m/s:`); }
+  if(v===4){ const k=rnd(1,6), L=rnd(2,6); return NUM('fis',r`\rho(x)=${k}x\ \text{kg/m},\quad 0\le x\le ${L}\ \text{m}`,fr(k*L*L,2),r`Masa $=\int_0^{${L}}${k}x\,dx$.`,'Calcula la masa de la barra en kg:'); }
+  if(v===5){ const a=rnd(1,6), b=rnd(1,9), c=rnd(10,50), Q=rnd(2,6); return NUM('fis',r`C'(q)=${a}q+${b},\quad C(0)=${c}`,fadd(fr(a*Q*Q,2),fr(b*Q+c)),r`$C(q)=\frac{${a}}{2}q^2+${b}q+${c}$; se evalúa en $q=${Q}$.`,`Calcula el costo C(${Q}):`); }
+  const a=rnd(2,8), b=rnd(2,6); return NUM('fis',r`f(x)=${a}x,\quad [0,${b}]`,fr(a*b,2),r`Promedio $=\frac{1}{${b}}\int_0^{${b}}${a}x\,dx=\frac{1}{${b}}\cdot\frac{${a}\cdot ${b}^2}{2}$.`,'Calcula el valor promedio de f:'); };
+
+/* ---------- verdadero/falso ---------- */
+const TFS={
+  u1:[TF(r`La antiderivada de una función es única.`,false,r`Hay infinitas antiderivadas: difieren en una constante $C$.`),
+      TF(r`$\int \frac{1}{x}\,dx=\ln|x|+C$ para $x\neq 0$.`,true,r`Es una de las integrales básicas de la tabla.`),
+      TF(r`$\int x^2\,dx=\frac{x^2}{2}+C$.`,false,r`Con la regla de la potencia queda $\frac{x^3}{3}+C$.`),
+      TF(r`Derivar una antiderivada de $f$ devuelve $f$.`,true,r`Derivar e integrar son operaciones inversas.`),
+      TF(r`$\int x^{-1}\,dx$ se puede resolver con la regla de la potencia.`,false,r`Con $n=-1$ se dividiría entre cero; por eso $\int x^{-1}dx=\ln|x|+C$.`),
+      TF(r`$\int e^{x}\,dx=e^{x}+C$.`,true,r`La exponencial es su propia derivada y su propia antiderivada.`),
+      TF(r`$\int \cos x\,dx=-\sin x+C$.`,false,r`Es $\sin x+C$; la que tiene signo negativo es $\int\sin x\,dx=-\cos x+C$.`),
+      TF(r`La constante $C$ solo se omite cuando la integral es definida.`,true,r`En la integral definida las constantes se cancelan al evaluar en los límites.`)],
+  u2:[TF(r`$\int_a^a f(x)\,dx=0$.`,true,r`Un intervalo sin ancho no acumula área.`),
+      TF(r`$\int_a^b f(x)\,dx=\int_b^a f(x)\,dx$.`,false,r`Al invertir los límites cambia el signo.`),
+      TF(r`Si $f(x)\ge 0$ en $[a,b]$, entonces $\int_a^b f(x)\,dx\ge 0$.`,true,r`La integral mide un área sin signo negativo cuando la función no baja del eje.`),
+      TF(r`La integral definida da como resultado una familia de funciones.`,false,r`La definida da un número; la indefinida da una familia de funciones.`),
+      TF(r`Una suma de Riemann se aproxima mejor a la integral al aumentar el número de rectángulos.`,true,r`La integral es el límite de las sumas de Riemann cuando $n\to\infty$.`),
+      TF(r`$\int_{-a}^{a} f(x)\,dx=0$ para cualquier función $f$.`,false,r`Solo si $f$ es impar. Para una función par, la integral es el doble de $\int_0^a f$.`),
+      TF(r`Si $F'(x)=f(x)$, entonces $\int_a^b f(x)\,dx=F(b)-F(a)$.`,true,r`Es la segunda parte del teorema fundamental del cálculo.`),
+      TF(r`$\int_a^b (f+g)\,dx=\int_a^b f\,dx+\int_a^b g\,dx$.`,true,r`La integral es lineal.`)],
+  u3:[TF(r`En sustitución, $g'(x)\,dx$ debe aparecer (salvo una constante) en el integrando.`,true,r`Así el cambio $u=g(x)$ simplifica la integral.`),
+      TF(r`La fórmula de partes es $\int u\,dv=uv-\int v\,du$.`,true,r`Es la regla del producto escrita al revés.`),
+      TF(r`Para $\sqrt{1-x^{2}}$ conviene la sustitución $x=\tan\theta$.`,false,r`Conviene $x=\sin\theta$, porque $1-\sin^2\theta=\cos^2\theta$.`),
+      TF(r`Las fracciones parciales sirven para integrar funciones racionales.`,true,r`Se descomponen en fracciones más simples.`),
+      TF(r`Para $\sqrt{x^{2}+a^{2}}$ conviene $x=a\tan\theta$.`,true,r`Porque $1+\tan^2\theta=\sec^2\theta$.`),
+      TF(r`Al integrar por partes, siempre se debe elegir $u=x$.`,false,r`Depende del integrando; la regla LIATE ayuda a decidir.`),
+      TF(r`Con $x=a\sec\theta$ la expresión $\sqrt{x^{2}-a^{2}}$ se convierte en $a\tan\theta$.`,true,r`Por $\sec^2\theta-1=\tan^2\theta$.`),
+      TF(r`Una fracción propia con denominador $(x+1)(x+2)$ se descompone como $\frac{A}{x+1}+\frac{B}{x+2}$.`,true,r`Es la descomposición para factores lineales distintos.`)],
+  u4:[TF(r`El área entre dos curvas se calcula integrando (curva superior $-$ curva inferior).`,true,r`Así se obtiene la altura de cada franja.`),
+      TF(r`El volumen por discos alrededor del eje x es $\pi\int f(x)^2\,dx$.`,true,r`Cada disco tiene área $\pi f(x)^2$.`),
+      TF(r`El valor promedio de $f$ en $[a,b]$ es $\int_a^b f(x)\,dx$ sin dividir.`,false,r`Hay que dividir entre $b-a$.`),
+      TF(r`El trabajo de una fuerza variable $F(x)$ es $\int F(x)\,dx$.`,true,r`Se acumula fuerza por desplazamiento.`),
+      TF(r`Si la velocidad es negativa, el desplazamiento $\int v\,dt$ puede ser negativo.`,true,r`El desplazamiento es con signo; la distancia recorrida usa $\int |v|\,dt$.`),
+      TF(r`Las capas cilíndricas usan $2\pi\int x\,f(x)\,dx$ al girar alrededor del eje y.`,true,r`Cada capa tiene radio $x$, altura $f(x)$ y grosor $dx$.`)]
+};
+
+/* ---------- plantillas por círculo (cada lección usa una combinación distinta) ---------- */
+const NP={
+  u1n1:{gens:[G.power,G.powerSum,G.antider,G.notAnti,G.constant,G.evalF,G.fromF]},
+  u1n2:{gens:[G.trig,G.poly,G.neg,G.rad,G.expand,G.prod,G.divide,G.mix]},
+  u1n3:{gens:[G.init,G.initTrig,G.initExp,G.init2,G.findC,G.velPos]},
+  u2n1:{gens:[G.area,G.riemann,G.trap,G.parab,G.setupArea]},
+  u2n2:{gens:[G.def,G.derint,G.chain,G.ftc2,G.defTrig,G.defRat]},
+  u2n3:{gens:[G.propsA,G.propsB,G.sym,G.def,G.propsA,G.propsB]},
+  u3n1:{gens:[G.subs,G.subsPow,G.subsExp,G.subsLn,G.subsRoot,G.subsTrig,G.subsLog,G.whichU]},
+  u3n2:{gens:[G.partsX,G.partsLn,G.partsX2,G.partsCyc,G.partsInv,G.whichUV]},
+  u3n3:{gens:[G.ts,G.ts,G.ts,G.tsPick,G.tsSimp,G.tsDx,G.tsDef]},
+  u3n4:{gens:[G.partial,G.partialN,G.partialX,G.partialA,G.partialZ,G.partialDef,G.partialForm]},
+  u4n1:{gens:[G.between,G.between,G.setupBetween]},
+  u4n2:{gens:[G.vol,G.vol,G.vol]},
+  u4n3:{gens:[G.fis,G.fis,G.fis]}
+};
+NP.u1n1.tf=TFS.u1; NP.u1n2.tf=[TFS.u1[1],TFS.u1[5],TFS.u1[6]]; NP.u1n3.tf=[TFS.u1[0],TFS.u1[3],TFS.u1[7]];
+NP.u2n1.tf=[TFS.u2[2],TFS.u2[4]]; NP.u2n2.tf=[TFS.u2[6],TFS.u2[3]]; NP.u2n3.tf=[TFS.u2[0],TFS.u2[1],TFS.u2[5],TFS.u2[7]];
+NP.u3n1.tf=[TFS.u3[0]]; NP.u3n2.tf=[TFS.u3[1],TFS.u3[5]]; NP.u3n3.tf=[TFS.u3[2],TFS.u3[4],TFS.u3[6]]; NP.u3n4.tf=[TFS.u3[3],TFS.u3[7]];
+NP.u4n1.tf=[TFS.u4[0]]; NP.u4n2.tf=[TFS.u4[1],TFS.u4[5]]; NP.u4n3.tf=[TFS.u4[2],TFS.u4[3],TFS.u4[4]];
+const join=(...k)=>({gens:k.flatMap(x=>NP[x].gens),tf:k.flatMap(x=>NP[x].tf||[])});
+NP.u1n4=join('u1n1','u1n2','u1n3'); NP.u2n4=join('u2n1','u2n2','u2n3'); NP.u3n5=join('u3n1','u3n2','u3n3','u3n4'); NP.u4n4=join('u4n1','u4n2','u4n3');
+
+const PASS=3;      // aciertos de 5 para completar una lección
+const nodes5=(list)=>list.map(([t,pool])=>({t,pool,lessons:5}));
+const REP=(pool,game)=>({t:'Repaso general',pool,lessons:1,repaso:true,game});
+const PATHS=[
+  {id:'u1',title:'Antiderivadas',short:'Antiderivadas',color:'#2E9E5B',
+   nodes:[...nodes5([['Concepto de antiderivada','u1n1'],['Reglas básicas','u1n2'],['Condiciones iniciales','u1n3']]),REP('u1n4','drop')]},
+  {id:'u2',title:'Integral definida',short:'Integral definida',color:'#0E9F8E',
+   nodes:[...nodes5([['Área bajo la curva','u2n1'],['Teorema fundamental','u2n2'],['Propiedades','u2n3']]),REP('u2n4',null)]},
+  {id:'u3',title:'Métodos de integración',short:'Métodos',color:'#6D4AC2',
+   nodes:[...nodes5([['Sustitución','u3n1'],['Por partes','u3n2'],['Sustitución trigonométrica','u3n3'],['Fracciones parciales','u3n4']]),REP('u3n5','maze')]},
+  {id:'u4',title:'Aplicaciones',short:'Aplicaciones',color:'#E5A00D',
+   nodes:[...nodes5([['Áreas entre curvas','u4n1'],['Volúmenes de revolución','u4n2'],['Aplicaciones físicas','u4n3']]),REP('u4n4',null)]}
+];
+
+/* ---------- construcción de preguntas ---------- */
+function build(fn){
+  for(let i=0;i<40;i++){ const q=fn(); if(q.t!=='mc'||new Set(q.o).size===4) return q; }
+  throw new Error('Pregunta con opciones repetidas');
+}
+const sigOf=q=>(q.q||'')+'|'+(q.f||q.s);
+const hist=k=>{ try{ return JSON.parse(localStorage.getItem('il_h_'+k)||'[]'); }catch(e){ return []; } };
+const saveH=(k,a)=>{ try{ localStorage.setItem('il_h_'+k,JSON.stringify(a.slice(-160))); }catch(e){} };
+
+/** Preguntas de la lección `li` (0–4) del círculo `key`. Cada lección toma otra ventana de plantillas y evita lo ya visto. */
+function lessonQuestions(key,li=0,n=5){
+  const np=NP[key], H=hist(key), seen=new Set(), out=[], m=np.gens.length, win=Math.min(m,5);
+  const gens=[...Array(win).keys()].map(k=>np.gens[(li*2+k)%m]);
+  const add=(fn,useH)=>{ for(let k=0;k<30;k++){ const q=build(fn), s=sigOf(q); if(!seen.has(s)&&(!useH||!H.includes(s))){ seen.add(s); out.push(q); return true; } } return false; };
+  if(np.tf&&np.tf.length&&li%2===0) add(pick(np.tf),true)||add(pick(np.tf),false);
+  for(let g=0;out.length<n&&g<120;g++) add(pick(gens),true);
+  for(let g=0;out.length<n&&g<120;g++) add(pick(np.gens),false);
+  saveH(key,[...H,...seen]);
+  return shuffle(out);
+}
+/** Pregunta de método para el laberinto (evita repetir el mismo método seguido). */
+function gameQuestion(lastMethod){
+  const pool=NP.u3n5.gens.filter(g=>g!==G.whichU&&g!==G.whichUV&&g!==G.partialForm&&g!==G.tsPick&&g!==G.tsSimp&&g!==G.tsDx);
+  let q; for(let i=0;i<10;i++){ q=build(pick(pool)); if(q.t==='mc'&&q.m!==lastMethod) break; }
+  return q.t==='mc'?q:gameQuestion(lastMethod);
+}
+/** Pregunta corta (integral inmediata o regla de la potencia) para el juego de caída. */
+function dropQuestion(){
+  const gens=[G.power,G.power,G.trig,G.constant,G.neg,G.rad];
+  for(let i=0;i<60;i++){ const q=build(pick(gens)); if(q.t==='mc'&&q.o.every(o=>o.length<=34)) return q; }
+  return build(G.power);
+}
+/** Prepara una pregunta para mostrarla (mezcla opciones). */
+function prep(q){
+  if(q.t==='mc') return {...q,opts:shuffle(q.o.map((t,i)=>({t,ok:i===0})))};
+  if(q.t==='tf') return {...q,opts:[{t:'Verdadero',ok:q.ok},{t:'Falso',ok:!q.ok}]};
+  return {...q};
+}
+/** Valida respuesta numérica escrita como entero, decimal o fracción a/b. */
+function checkNum(text,[n,d]){
+  const s=String(text).trim().replace(',','.').replace(/\s+/g,''); let v;
+  if(/^-?\d+(\.\d+)?\/-?\d+(\.\d+)?$/.test(s)){ const [a,b]=s.split('/').map(Number); v=b?a/b:NaN; }
+  else if(/^-?\d+(\.\d+)?$/.test(s)) v=Number(s); else return null;
+  return Math.abs(v-n/d)<=0.01;
+}
+const _G=G;   // (solo para pruebas)
+
+return {METHODS,shuffle,ansTex,PASS,PATHS,lessonQuestions,gameQuestion,dropQuestion,prep,checkNum};
+})();
+const {METHODS,shuffle,ansTex,PASS,PATHS,lessonQuestions,gameQuestion,dropQuestion,prep,checkNum} = EX;
+
+/* ---------- laberinto de integrales ---------- */
+const MZ = (() => {
+/* ∫ntegraLab · Laberinto de integrales (mapa grande con salas de varias partes).
+   Resolver 3 integrales de un color abre la puerta de ese color. Dependencias:
+   Vestíbulo (rojo) → Sala central (azul + verde) → [puerta azul] Jardín (amarillo + verde)
+   → vuelve a la Sala central [puerta amarilla] → Biblioteca (morado) → [puerta morada] Salón → [puerta verde] Meta. */
+const COLORS={1:'#D64550',2:'#2D6CDF',3:'#E5A00D',4:'#2E9E5B',5:'#6D4AC2'};
+const CNAME={1:'roja',2:'azul',3:'amarilla',4:'verde',5:'morada'};
+const DOORS={A:1,B:2,C:3,D:4,E:5};
+const NEED=3;
+const W=57,H=37;
+const ZONES=[
+  {name:'Vestíbulo',tint:'#F4EFE0',rects:[[2,14,13,9],[3,8,6,6],[3,23,7,7]]},
+  {name:'Sala central',tint:'#E4EEFA',rects:[[16,14,15,9],[19,7,9,7],[19,23,9,7]]},
+  {name:'Jardín',tint:'#E3F3E8',rects:[[32,14,15,9],[35,7,9,7],[35,23,9,7]]},
+  {name:'Biblioteca',tint:'#EDE6F8',rects:[[16,31,15,5],[6,31,10,5]]},
+  {name:'Salón',tint:'#FBE6E8',rects:[[32,31,15,5]]},
+  {name:'Meta',tint:'#FBF0CF',rects:[[48,31,7,5]]}
+];
+const DOORCELLS=[[15,18,'A'],[31,18,'B'],[23,30,'C'],[31,33,'E'],[47,33,'D']];
+const START=[4,18], FLAG=[51,33];
+// [zona, sala, color, cantidad]  → 5 integrales de cada color, repartidas por varias salas
+const PLACE=[[0,0,1,2],[0,1,1,2],[0,2,1,1],
+  [1,1,2,2],[1,2,2,2],[1,0,2,1],[1,0,4,1],[1,2,4,1],
+  [2,0,3,1],[2,1,3,2],[2,2,3,2],[2,0,4,1],[2,1,4,1],[2,2,4,1],
+  [3,0,5,3],[3,1,5,2]];
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const cheb=(a,b,c,d)=>Math.max(Math.abs(a-c),Math.abs(b-d));
+
+const isWall=ch=>ch==='#'||ch==='o'||ch==='p';
+function solvable(g,ints,start=START){
+  const counts={},got=new Set(),open=new Set(); let win=false,changed=true;
+  const at={}; ints.forEach(i=>{ at[i.gx+','+i.gy]=i; });
+  while(changed){ changed=false; const seen=new Set([start.join(',')]),q=[start];
+    while(q.length){ const [x,y]=q.pop(), ch=g[y][x];
+      const it=at[x+','+y]; if(it&&!got.has(it)){ got.add(it); counts[it.c]=(counts[it.c]||0)+1; if(counts[it.c]===NEED){ for(const d in DOORS) if(DOORS[d]===it.c) open.add(d); changed=true; } }
+      if(ch==='F') win=true;
+      for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){ const nx=x+dx,ny=y+dy,c=g[ny]?.[nx],k=nx+','+ny;
+        if(c===undefined||isWall(c)||seen.has(k)||(c in DOORS&&!open.has(c))) continue; seen.add(k); q.push([nx,ny]); } } }
+  return win;
+}
+
+function buildMap(){
+  const g=Array.from({length:H},()=>Array(W).fill('#')), zid=Array.from({length:H},()=>Array(W).fill(-1)), cells=ZONES.map(z=>z.rects.map(()=>[]));
+  ZONES.forEach((z,zi)=>z.rects.forEach(([x,y,w,h],ri)=>{ for(let yy=y;yy<y+h;yy++) for(let xx=x;xx<x+w;xx++){ g[yy][xx]='.'; zid[yy][xx]=zi; cells[zi][ri].push([xx,yy]); } }));
+  DOORCELLS.forEach(([x,y,c])=>{ g[y][x]=c; });
+  g[FLAG[1]][FLAG[0]]='F';
+  const nearFixed=(x,y,d)=>DOORCELLS.some(([a,b])=>cheb(x,y,a,b)<=d)||cheb(x,y,START[0],START[1])<=d||cheb(x,y,FLAG[0],FLAG[1])<=d;
+  const ints=[], used=new Set();
+  for(const [zi,ri,c,n] of PLACE){
+    for(let k=0;k<n;k++){ let ok=false;
+      for(let t=0;t<300&&!ok;t++){ const [x,y]=cells[zi][ri][rnd(0,cells[zi][ri].length-1)], min=t<200?3:2;
+        if(used.has(x+','+y)||nearFixed(x,y,2)||ints.some(i=>cheb(x,y,i.gx,i.gy)<min)) continue;
+        ints.push({gx:x,gy:y,c,x:x*32+16,y:y*32+16,got:false,gone:false,cool:0}); used.add(x+','+y); ok=true; }
+    }
+  }
+  // objetos sólidos (cajas y columnas) y plantas decorativas
+  const deco=[];
+  ZONES.forEach((z,zi)=>z.rects.forEach((_,ri)=>{ const cs=cells[zi][ri], nObs=Math.floor(cs.length/15), nDec=Math.floor(cs.length/18);
+    for(let k=0,tries=0;k<nObs&&tries<400;tries++){ const [x,y]=cs[rnd(0,cs.length-1)];
+      const free=[-1,0,1].every(dy=>[-1,0,1].every(dx=>g[y+dy]?.[x+dx]==='.'||(dx===0&&dy===0&&g[y][x]==='.')));
+      if(!free||nearFixed(x,y,3)||ints.some(i=>cheb(x,y,i.gx,i.gy)<2)) continue;
+      if([-2,-1,0,1,2].some(dy=>[-2,-1,0,1,2].some(dx=>g[y+dy]?.[x+dx]==='o'||g[y+dy]?.[x+dx]==='p'))) continue;
+      g[y][x]=Math.random()<.6?'o':'p'; k++; }
+    for(let k=0,tries=0;k<nDec&&tries<200;tries++){ const [x,y]=cs[rnd(0,cs.length-1)];
+      if(g[y][x]!=='.'||used.has(x+','+y)||nearFixed(x,y,2)||deco.some(d=>d.x===x&&d.y===y)) continue; deco.push({x,y,k:rnd(0,1)}); k++; } }));
+  return {g,zid,ints,deco};
+}
+
+const Maze=(()=>{
+  const TS=32, HALF=9, SPEED=145;
+  let cv,ctx,opts,grid,zid,ints,deco,counts,P,state='idle',raf=0,last=0,T=0,dpr=1,scale=1,CW=0,CH=0,cam={x:0,y:0},stats,floaters=[];
+  const keys={};
+  const KEYMAP={KeyW:'u',ArrowUp:'u',KeyS:'d',ArrowDown:'d',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'};
+
+  function reset(){
+    let m; for(let i=0;i<30;i++){ m=buildMap(); if(solvable(m.g,m.ints)) break; }
+    grid=m.g; zid=m.zid; ints=m.ints; deco=m.deco; counts={1:0,2:0,3:0,4:0,5:0}; floaters=[];
+    P={x:START[0]*TS+TS/2,y:START[1]*TS+TS/2,face:1}; stats={ok:0,bad:0,t:0}; cam={x:P.x,y:P.y}; hud();
+  }
+  function hud(){ if(!opts?.hud) return;
+    opts.hud.innerHTML=[1,2,3,4,5].map(c=>`<span class="dchip" style="--c:${COLORS[c]}"><i></i>${Math.min(counts[c],NEED)}/${NEED}${counts[c]>=NEED?' ✓':''}</span>`).join(''); }
+  const solid=(px,py)=>{ const ch=grid[Math.floor(py/TS)]?.[Math.floor(px/TS)]; return ch===undefined||isWall(ch)||(ch in DOORS); };
+  const hit=(x,y)=>[[-1,-1],[1,-1],[-1,1],[1,1]].some(([a,b])=>solid(x+a*HALF,y+b*HALF));
+  function move(dx,dy){ if(!hit(P.x+dx,P.y)) P.x+=dx; if(!hit(P.x,P.y+dy)) P.y+=dy; }
+  function openDoors(c){
+    grid.forEach((row,y)=>row.forEach((ch,x)=>{ if(DOORS[ch]===c) grid[y][x]='.'; }));
+    ints.forEach(i=>{ if(i.c===c&&!i.got) i.gone=true; });       // las que sobran de ese color desaparecen
+    opts.toast?.(`¡Se abrió la puerta ${CNAME[c]}!`);
+  }
+  function update(dt){
+    stats.t+=dt;
+    const dx=(keys.r?1:0)-(keys.l?1:0), dy=(keys.d?1:0)-(keys.u?1:0);
+    if(dx||dy){ const n=Math.hypot(dx,dy); move(dx/n*SPEED*dt,dy/n*SPEED*dt); if(dx) P.face=dx; }
+    for(const it of ints){
+      if(it.cool>0) it.cool-=dt;
+      if(!it.got&&!it.gone&&it.cool<=0&&Math.hypot(P.x-it.x,P.y-it.y)<17){
+        state='quiz'; keys.u=keys.d=keys.l=keys.r=false;
+        opts.ask(it.c).then(ok=>{
+          if(ok){ it.got=true; counts[it.c]++; stats.ok++; floaters.push({x:it.x,y:it.y,l:1.1,c:it.c}); if(counts[it.c]===NEED) openDoors(it.c); }
+          else { stats.bad++; it.cool=1.6; }
+          hud(); if(state==='quiz') state='play'; });
+        return; } }
+    if(grid[Math.floor(P.y/TS)][Math.floor(P.x/TS)]==='F'){ state='win'; opts.win({...stats}); }
+  }
+
+  /* ---------- dibujo (colores planos) ---------- */
+  function drawMini(){
+    const m=Math.min(3,(CW*.36)/W), ox=CW/scale-W*m/scale-6, oy=6; // coordenadas lógicas
+    const k=m/scale; ctx.save(); ctx.translate(CW/scale-W*k-6,6);
+    ctx.fillStyle='rgba(27,42,73,.82)'; ctx.fillRect(-3,-3,W*k+6,H*k+6);
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){ const ch=grid[y][x]; if(ch==='#') continue;
+      ctx.fillStyle=ch in DOORS?COLORS[DOORS[ch]]:isWall(ch)?'#56627F':ch==='F'?'#F5C542':'#C9D0E3'; ctx.fillRect(x*k,y*k,Math.max(k,1),Math.max(k,1)); }
+    for(const it of ints){ if(it.got||it.gone) continue; ctx.fillStyle=COLORS[it.c]; ctx.fillRect(it.gx*k-.5,it.gy*k-.5,k*1.6,k*1.6); }
+    ctx.fillStyle=Math.floor(T*3)%2?'#fff':'#1B2A49'; ctx.fillRect(P.x/TS*k-1,P.y/TS*k-1,k*2+1,k*2+1); ctx.restore();
+  }
+  function draw(){
+    ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+    const vw=CW/scale, vh=CH/scale, mw=W*TS, mh=H*TS;
+    ctx.fillStyle='#1B2A49'; ctx.fillRect(0,0,vw,vh);
+    cam.x+=((mw<=vw?(mw-vw)/2:Math.max(0,Math.min(mw-vw,P.x-vw/2)))-cam.x)*.18;
+    cam.y+=((mh<=vh?(mh-vh)/2:Math.max(0,Math.min(mh-vh,P.y-vh/2)))-cam.y)*.18;
+    ctx.save(); ctx.translate(-Math.round(cam.x),-Math.round(cam.y));
+    const x0=Math.max(0,Math.floor(cam.x/TS)), x1=Math.min(W-1,Math.ceil((cam.x+vw)/TS)), y0=Math.max(0,Math.floor(cam.y/TS)), y1=Math.min(H-1,Math.ceil((cam.y+vh)/TS));
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++){
+      const ch=grid[y][x], px=x*TS, py=y*TS;
+      if(ch==='#'){ ctx.fillStyle='#2C3E66'; ctx.fillRect(px,py,TS,TS); ctx.fillStyle='#1B2A49'; ctx.fillRect(px,py+TS-4,TS,4); continue; }
+      const z=zid[y][x]; ctx.fillStyle=z>=0?ZONES[z].tint:'#E8ECF5'; ctx.fillRect(px,py,TS,TS);
+      if((x+y)%2){ ctx.fillStyle='rgba(27,42,73,.05)'; ctx.fillRect(px,py,TS,TS); }
+      if(ch in DOORS){ const c=DOORS[ch]; ctx.fillStyle=COLORS[c]; ctx.fillRect(px+2,py+2,TS-4,TS-4); ctx.fillStyle='#fff'; ctx.font='800 11px Nunito, sans-serif'; ctx.fillText(`${Math.min(counts[c],NEED)}/${NEED}`,px+TS/2,py+TS/2); }
+      else if(ch==='F'){ ctx.fillStyle='#1B2A49'; ctx.fillRect(px+4,py+4,TS-8,TS-8); ctx.fillStyle='#F5C542'; ctx.font='800 11px Nunito, sans-serif'; ctx.fillText('META',px+TS/2,py+TS/2); }
+      else if(ch==='o'){ ctx.fillStyle='#A9743A'; ctx.fillRect(px+3,py+3,TS-6,TS-6); ctx.strokeStyle='#6B4623'; ctx.lineWidth=2; ctx.strokeRect(px+3,py+3,TS-6,TS-6); ctx.beginPath(); ctx.moveTo(px+3,py+3); ctx.lineTo(px+TS-3,py+TS-3); ctx.moveTo(px+TS-3,py+3); ctx.lineTo(px+3,py+TS-3); ctx.stroke(); }
+      else if(ch==='p'){ ctx.fillStyle='#8A93A8'; ctx.beginPath(); ctx.arc(px+TS/2,py+TS/2,12,0,7); ctx.fill(); ctx.fillStyle='#B7BECF'; ctx.beginPath(); ctx.arc(px+TS/2-3,py+TS/2-3,5,0,7); ctx.fill(); }
+    }
+    for(const d of deco){ if(d.x<x0||d.x>x1||d.y<y0||d.y>y1) continue; const cx=d.x*TS+TS/2, cy=d.y*TS+TS/2;
+      ctx.fillStyle='#8B5E34'; ctx.fillRect(cx-5,cy+2,10,8); ctx.fillStyle=d.k?'#2E9E5B':'#0E9F8E'; ctx.beginPath(); ctx.arc(cx,cy-2,8,0,7); ctx.fill(); }
+    for(const it of ints){ if(it.got||it.gone) continue; const by=it.y+Math.sin(T*3+it.x)*2;
+      ctx.fillStyle=COLORS[it.c]; ctx.beginPath(); ctx.arc(it.x,by,13,0,7); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.font='800 19px Fraunces, Georgia, serif'; ctx.fillText('∫',it.x,by+1); }
+    ctx.fillStyle='#1B2A49'; ctx.fillRect(P.x-HALF,P.y-HALF,HALF*2,HALF*2);
+    ctx.fillStyle='#fff'; ctx.fillRect(P.x-5+P.face*2,P.y-4,4,5); ctx.fillRect(P.x+1+P.face*2,P.y-4,4,5);
+    ctx.fillStyle='#F5C542'; ctx.fillRect(P.x-2,P.y-HALF-4,4,4);
+    ctx.font='800 15px Nunito, sans-serif';
+    for(const f of floaters){ ctx.globalAlpha=Math.min(1,f.l*1.5); ctx.fillStyle=COLORS[f.c]; ctx.fillText('+1 ✓',f.x,f.y-(1.1-f.l)*28); }
+    ctx.globalAlpha=1; ctx.restore();
+    drawMini();
+  }
+  function loop(ts){ raf=requestAnimationFrame(loop); const dt=Math.min(.033,(ts-last)/1000||0); last=ts; T+=dt;
+    if(state==='play') update(dt); floaters.forEach(f=>f.l-=dt); floaters=floaters.filter(f=>f.l>0); draw(); }
+  function resize(){ dpr=Math.min(2,window.devicePixelRatio||1); const cw=cv.clientWidth,ch=cv.clientHeight; if(!cw||!ch) return;
+    cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr); CW=cw; CH=ch; scale=ch/(9*TS); }
+  const onKey=down=>e=>{ const d=KEYMAP[e.code]; if(!d) return; e.preventDefault(); if(down) opts.onKey?.(); keys[d]=down&&state==='play'; };
+  const kd=onKey(true), ku=onKey(false), onResize=()=>resize(), onBlur=()=>{ keys.u=keys.d=keys.l=keys.r=false; };
+  return {
+    start(o){ this.stop(); opts=o; cv=o.canvas; ctx=cv.getContext('2d'); reset(); resize(); state='play';
+      window.addEventListener('keydown',kd); window.addEventListener('keyup',ku); window.addEventListener('resize',onResize); window.addEventListener('blur',onBlur);
+      last=performance.now(); raf=requestAnimationFrame(loop); },
+    stop(){ cancelAnimationFrame(raf); raf=0; window.removeEventListener('keydown',kd); window.removeEventListener('keyup',ku);
+      window.removeEventListener('resize',onResize); window.removeEventListener('blur',onBlur); keys.u=keys.d=keys.l=keys.r=false; state='idle'; },
+    press(dir,on){ keys[dir]=on&&state==='play'; },
+    restart(){ reset(); state='play'; },
+    snapshot(){ return {x:P.x,y:P.y,counts:{...counts},state}; },
+    info(){ return {grid:grid.map(r=>[...r]),ints:ints.map(i=>({...i}))}; }
+  };
+})();
+
+return {COLORS,CNAME,NEED,Maze};
+})();
+const {Maze,COLORS,CNAME,NEED} = MZ;
+
+/* ---------- aplicación ---------- */
+/* IntegraLab · aplicación principal (Firebase Auth + Firestore en tiempo real) */
+
+const CONFIGURED = !/PEGA_AQUI/.test(firebaseConfig.apiKey);
+let auth, db;
+if(CONFIGURED){ const app=initializeApp(firebaseConfig); auth=getAuth(app); db=initializeFirestore(app,{experimentalAutoDetectLongPolling:true}); }
+const dref=(...p)=>doc(db,...p), col=(...p)=>collection(db,...p);
+
+/* ---------- utilidades ---------- */
+const $=s=>document.querySelector(s);
+const ROLE={admin:'Administrador',docente:'Docente',estudiante:'Estudiante'};
+const LET=['A','B','C','D','E','F'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tex=(s,d)=>{ try{ return katex.renderToString(s,{throwOnError:false,displayMode:!!d}); }catch(e){ return esc(s); } };
+const rich=s=>String(s??'').split('$').map((p,i)=>i%2?tex(p):esc(p).replace(/\n/g,'<br>')).join('');
+const fdate=ts=>ts?new Date(ts).toLocaleDateString('es-CO',{day:'numeric',month:'short'}):'';
+const fdue=d=>d?new Date(d+'T00:00').toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'}):'Sin fecha';
+const ini=n=>(String(n||'?').trim()[0]||'?').toUpperCase();
+const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
+const byNew=(a,b)=>(b.createdAt||0)-(a.createdAt||0);
+const MCOL=['#2D6CDF','#0E9F8E','#6D4AC2','#D64550','#E5A00D','#2E9E5B','#1B2A49'];
+const mcolor=m=>MCOL[Math.abs([...String(m)].reduce((a,c)=>a+c.charCodeAt(0),0))%MCOL.length];
+let toastT; const toast=m=>{ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400); };
+const safe=fn=>async(...a)=>{ try{ return await fn(...a); }catch(e){ console.error(e);
+  toast(e.code==='permission-denied'?'No tienes permiso para esta acción.':'Error: '+(e.message||e.code||'inténtalo de nuevo')); } };
+const today=()=>new Date().toLocaleDateString('en-CA');
+const ago=n=>{ const d=new Date(); d.setDate(d.getDate()+n); return d.toLocaleDateString('en-CA'); };
+
+/* ---------- archivos adjuntos: se guardan DENTRO de Firestore en fragmentos (no se usa Storage) ---------- */
+const MAX_FILE=10*1024*1024, CHUNK=450*1024, MAX_FILES=5;   // 450 KB por fragmento (múltiplo de 3) → ≈600 KB en base64, bajo el límite de 1 MB por documento
+const MIMES={pdf:'application/pdf',doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg'};
+const ACCEPT='.'+Object.keys(MIMES).join(',.');
+const fext=n=>String(n).split('.').pop().toLowerCase();
+const fsize=b=>b<1048576?Math.max(1,Math.round(b/1024))+' KB':(b/1048576).toFixed(1)+' MB';
+const toB64=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return btoa(s); };
+function checkFile(f){
+  if(!MIMES[fext(f.name)]) return 'Formato no permitido. Usa PDF, DOC, DOCX, XLSX, PPTX, PNG o JPG.';
+  if(!f.size) return 'El archivo está vacío.';
+  if(f.size>MAX_FILE) return `El archivo pesa ${fsize(f.size)} y el máximo es 10 MB.`;
+  return '';
+}
+async function removeFileDocs(meta){
+  for(let i=0;i<(meta.chunks||0);i++) await deleteDoc(dref('files',meta.id,'chunks',String(i))).catch(()=>{});
+  await deleteDoc(dref('files',meta.id)).catch(()=>{});
+}
+async function uploadFile(file,{scope,actId,desc},onProg){
+  const err=checkFile(file); if(err) throw new Error(err);
+  const buf=new Uint8Array(await file.arrayBuffer()), n=Math.ceil(buf.length/CHUNK), ref=doc(col('files')), fid=ref.id;
+  const meta={id:fid,name:file.name,type:MIMES[fext(file.name)],size:file.size,desc:desc||'',chunks:n};
+  await setDoc(ref,{name:meta.name,type:meta.type,size:meta.size,ownerUid:S.user.uid,ownerName:S.profile.name,scope,chunks:n,desc:meta.desc,createdAt:Date.now(),...(actId?{actId}:{})});
+  const jobs=[...Array(n).keys()]; let done=0;
+  const worker=async()=>{ while(jobs.length){ const i=jobs.shift(); await setDoc(dref('files',fid,'chunks',String(i)),{i,d:toB64(buf.subarray(i*CHUNK,(i+1)*CHUNK))}); onProg&&onProg(++done/n); } };
+  try{ await Promise.all([worker(),worker(),worker()]); }
+  catch(e){ jobs.length=0; await removeFileDocs(meta); throw e; }
+  return meta;
+}
+const downloadFile=safe(async meta=>{
+  toast('Descargando…'); const parts=[];
+  for(let i=0;i<meta.chunks;i++){ const sn=await getDoc(dref('files',meta.id,'chunks',String(i))); if(!sn.exists()) throw new Error('El archivo está incompleto.'); parts.push(sn.data().d); }
+  if(window.IntegraLabApp?.saveFile){ window.IntegraLabApp.saveFile(meta.name,meta.type,parts.join('')); return; }   // app Android
+  const blob=new Blob(parts.map(d=>Uint8Array.from(atob(d),c=>c.charCodeAt(0))),{type:meta.type});
+  const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download=meta.name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+});
+
+
+/* ---------- estado ---------- */
+const S={ready:false,user:null,profile:null,fatal:'',units:[],acts:[],tests:[],threads:[],users:[],
+  prog:{done:{},streak:0,lastDay:''},unsubP:[],unsubD:[],unsubW:[],seen:{},authTab:'login',authErr:'',
+  cur:null,L:null,T:null,TE:null,pf:null,upl:null,qh:null,pendingName:'',dataRole:'',lastHash:''};
+const role=()=>S.profile?.role;
+const isAdmin=()=>role()==='admin';
+const isStaff=()=>isAdmin()||role()==='docente';
+const canUse=()=>isStaff()||S.profile?.enrolled===true;
+
+/* ---------- progreso ---------- */
+const P=id=>PATHS.find(p=>p.id===id);
+const key=(u,n,l)=>`${u}_n${n}_l${l}`;
+const lDone=(u,n,l)=>!!S.prog.done[key(u,n,l)];
+const nodeOf=(u,n)=>P(u).nodes[n];
+const nCount=(u,n)=>[...Array(nodeOf(u,n).lessons).keys()].filter(l=>lDone(u,n,l)).length;
+const nDone=(u,n)=>nCount(u,n)===nodeOf(u,n).lessons;
+const nOpen=(u,n)=>n===0||nDone(u,n-1);            // un círculo exige haber terminado el anterior
+const lOpen=(u,n,l)=>nOpen(u,n)&&(l===0||lDone(u,n,l-1));
+const uTotal=p=>p.nodes.reduce((a,nd)=>a+nd.lessons,0);
+const uCount=p=>p.nodes.reduce((a,_,n)=>a+nCount(p.id,n),0);
+const allTotal=()=>PATHS.reduce((a,p)=>a+uTotal(p),0);
+const skipped=i=>uCount(PATHS[i])<uTotal(PATHS[i])&&PATHS.slice(i+1).some(q=>uCount(q)>0);
+const firstUnit=()=>(PATHS.find(p=>uCount(p)<uTotal(p))||PATHS[0]).id;
+const streakNow=()=>[today(),ago(-1)].includes(S.prog.lastDay)?(S.prog.streak||0):0;
+
+const markLesson=safe(async(u,n,l)=>{
+  const k=key(u,n,l); if(S.prog.done[k]) return;
+  let s=S.prog.streak||0, ld=S.prog.lastDay;
+  if(ld!==today()){ s=ld===ago(-1)?s+1:1; ld=today(); }          // la racha sube con la 1.ª lección de cada día
+  S.prog.done[k]=Date.now(); S.prog.streak=s; S.prog.lastDay=ld;
+  await setDoc(dref('progress',S.user.uid),{done:{[k]:S.prog.done[k]},streak:s,lastDay:ld,updatedAt:Date.now()},{merge:true});
+});
+
+/* ---------- sesión y datos en tiempo real ---------- */
+const explain=e=>({'permission-denied':'las reglas de Firestore no permiten la operación (revisa que estén publicadas).',
+  'not-found':'no existe la base de datos (créala en Firebase → Firestore Database).','unavailable':'sin conexión con Firestore.',
+  'failed-precondition':'Firestore no está listo (¿creaste la base de datos?).'}[e?.code]||(e?.code||e?.message||'error desconocido'));
+if(CONFIGURED) onAuthStateChanged(auth,u=>{
+  stopData(); S.unsubP.forEach(f=>f()); S.unsubP=[]; S.user=u; S.profile=null; S.fatal=''; S.stuck=false; S.creating=false;
+  if(!u){ S.ready=true; route(); return; }
+  try{ S.seen=JSON.parse(localStorage.getItem('il_seen_'+u.uid)||'{}'); }catch(e){ S.seen={}; }
+  S.ready=true; route();                      // muestra "Preparando tu perfil…" sin esperar a Firestore
+  clearTimeout(S.wd); S.wd=setTimeout(()=>{ if(S.user&&!S.profile&&!S.fatal){ S.stuck=true; render(); } },9000);
+  S.unsubP.push(onSnapshot(dref('users',u.uid),async sn=>{
+    if(!sn.exists()){                         // primera vez: se crea el perfil y el listener lo recibe solo
+      if(S.creating) return; S.creating=true;
+      try{
+        const adm=u.email.toLowerCase()===ADMIN_EMAIL.toLowerCase();
+        await setDoc(dref('users',u.uid),{email:u.email,name:S.pendingName||u.displayName||u.email.split('@')[0],role:adm?'admin':'estudiante',enrolled:adm,createdAt:Date.now()});
+      }catch(e){ console.error(e); S.creating=false; S.fatal='No se pudo crear tu perfil: '+explain(e); render(); }
+      return;
+    }
+    S.creating=false; S.stuck=false; clearTimeout(S.wd); S.fatal='';
+    const first=!S.profile, had=canUse();
+    S.profile=sn.data(); S.ready=true;
+    if(canUse()){ if(S.dataRole!==role()){ stopData(); } startData(); } else stopData();
+    if(first||had!==canUse()) route(); else changed();
+  },e=>{ console.error(e); S.fatal='No se pudo leer tu perfil: '+explain(e); render(); }));
+});
+else S.ready=true;
+
+function stopData(){ S.progLoaded=false; S.loaded={}; S.unsubD.forEach(f=>f()); S.unsubD=[]; S.unsubW.forEach(f=>f()); S.unsubW=[]; S.dataRole=''; }
+function startData(){
+  if(S.unsubD.length) return; S.dataRole=role();
+  const L=(c,k,after)=>S.unsubD.push(onSnapshot(col(c),sn=>{
+    S[k]=sn.docs.map(d=>({id:d.id,...d.data()})); (S.loaded??={})[k]=true;
+    if(S.seen[k]===undefined){ S.seen[k]=Date.now(); localStorage.setItem('il_seen_'+S.user.uid,JSON.stringify(S.seen)); }
+    after&&after(sn); changed();
+  },e=>console.error(c,e)));
+  L('units','units',seedUnits); L('activities','acts'); L('tests','tests'); L('threads','threads');
+  if(isStaff()) L('users','users');
+  S.unsubD.push(onSnapshot(dref('progress',S.user.uid),sn=>{
+    const d=sn.exists()?sn.data():{}; S.prog={done:d.done||{},streak:d.streak||0,lastDay:d.lastDay||''};
+    if(!S.progLoaded){ S.progLoaded=true; if(routeName()==='leccion'&&!S.L){ route(); return; } }
+    changed();
+  }));
+}
+let seeded=false;
+const SEED=[['u1','Unidad 1 · Antiderivadas','Concepto de antiderivada, reglas básicas, constante C y condiciones iniciales.'],
+  ['u2','Unidad 2 · Integral definida','Área bajo la curva, teorema fundamental del cálculo y propiedades.'],
+  ['u3','Unidad 3 · Métodos de integración','Sustitución, integración por partes, sustitución trigonométrica y fracciones parciales.'],
+  ['u4','Unidad 4 · Aplicaciones','Áreas entre curvas, volúmenes de revolución y aplicaciones físicas.']];
+const seedUnits=safe(async sn=>{
+  if(seeded||!isAdmin()||!sn.empty||sn.metadata.fromCache) return; seeded=true;
+  for(const [i,[id,title,desc]] of SEED.entries()) await setDoc(dref('units',id),{title,desc,order:i+1,resources:[],createdAt:Date.now(),uid:S.user.uid});
+});
+const LIVE=new Set(['leccion','juego','testedit']);   // pantallas con estado propio: no se redibujan solas
+function changed(){ const n=routeName();
+  if(n==='testedit'&&!S.TE&&isStaff()){ initTE(parts()[1]); render(); return; }
+  if(!LIVE.has(n)) render(); }
+
+/* ---------- ruta ---------- */
+const parts=()=>location.hash.replace(/^#\/?/,'').split('/').filter(Boolean).map(decodeURIComponent);
+const routeName=()=>parts()[0]||'home';
+const go=p=>{ location.hash='#/'+p; };
+window.addEventListener('hashchange',()=>route());
+function route(){ enter(); render(); }
+
+function watch(unsub){ S.unsubW.push(unsub); }
+function enter(){
+  S.unsubW.forEach(f=>f()); S.unsubW=[]; S.cur=null; S.TE=null; S.pf=null; Maze.stop(); Drop.stop(); $('#modal').classList.add('hidden'); S.qh=null;
+  if(!S.user||!S.profile||!canUse()) return;
+  const [n,a,b,c]=parts();
+  if(n==='foro'&&a){ S.cur={replies:[]};
+    watch(onSnapshot(col('threads',a,'replies'),sn=>{ S.cur.replies=sn.docs.map(d=>({id:d.id,...d.data()})).sort((x,y)=>x.createdAt-y.createdAt); changed(); })); }
+  if(n==='act'&&a){ S.cur={sub:null,subs:[]};
+    if(isStaff()) watch(onSnapshot(col('activities',a,'submissions'),sn=>{ S.cur.subs=sn.docs.map(d=>({id:d.id,...d.data()})); changed(); }));
+    else watch(onSnapshot(dref('activities',a,'submissions',S.user.uid),sn=>{ S.cur.sub=sn.exists()?sn.data():null; changed(); })); }
+  if(n==='test'&&a){ S.T={id:a,ans:{},done:false,prev:null,grade:null,loading:!isStaff()}; S.cur={results:[],grades:{}};
+    if(isStaff()){
+      watch(onSnapshot(col('tests',a,'results'),sn=>{ S.cur.results=sn.docs.map(d=>({id:d.id,...d.data()})); changed(); }));
+      watch(onSnapshot(col('tests',a,'grades'),sn=>{ S.cur.grades=Object.fromEntries(sn.docs.map(d=>[d.id,d.data()])); changed(); }));
+    } else Promise.all([getDoc(dref('tests',a,'results',S.user.uid)),getDoc(dref('tests',a,'grades',S.user.uid))]).then(([r,g])=>{
+      if(S.T?.id===a){ S.T.prev=r.exists()?r.data():null; S.T.grade=g.exists()?g.data():null; S.T.loading=false; render(); }
+    }).catch(()=>{ if(S.T){ S.T.loading=false; render(); } }); }
+  if(n==='testedit'&&isStaff()) initTE(a);
+  if(n==='leccion') startLesson(a,+b,+c);
+}
+
+/* ---------- componentes ---------- */
+const top=(t,back='home')=>`<div class="top"><button class="back" data-go="${back}" aria-label="Volver">←</button><h2>${t}</h2></div>`;
+const chip=(t,c='')=>`<span class="chip ${c}">${t}</span>`;
+const empty=t=>`<div class="empty">${t}</div>`;
+const newN=k=>S[k].filter(x=>(x.createdAt||0)>(S.seen[k]||0)&&x.uid!==S.user.uid).length;
+const markSeen=k=>{ S.seen[k]=Date.now(); localStorage.setItem('il_seen_'+S.user.uid,JSON.stringify(S.seen)); };
+const staffBtn=(label,act,id='')=>isStaff()?`<button class="btn btn-ghost btn-sm" data-act="${act}" data-id="${id}">${label}</button>`:'';
+
+const actClosed=a=>!!(a&&a.closeAfter&&a.dueTs&&Date.now()>a.dueTs);
+const findFile=fid=>[...S.acts.flatMap(a=>a.files||[]),...S.units.flatMap(u=>u.files||[]),...(S.cur?.sub?.files||[]),...(S.cur?.subs||[]).flatMap(x=>x.files||[])].find(f=>f.id===fid);
+function attachPanel(ctx,files,{edit=false,add=false,label='Archivos adjuntos'}={}){
+  files=files||[];
+  if(!files.length&&!add) return '';
+  const pf=S.pf?.ctx===ctx?S.pf.file:null, up=S.upl?.ctx===ctx?S.upl:null;
+  return `<p class="label">${label}${add?` (${files.length}/${MAX_FILES})`:''}</p>`+
+    files.map(f=>`<div class="frow"><span class="fic">${esc(fext(f.name))}</span><span class="body"><strong>${esc(f.name)}</strong><br><span class="s">${fsize(f.size)}${f.desc?' · '+esc(f.desc):''}</span></span>
+      <button class="btn btn-ghost btn-sm" data-act="dl" data-fid="${f.id}">Descargar</button>${edit?`<button class="link" data-act="rmfile" data-fid="${f.id}" data-ctx="${ctx}">Quitar</button>`:''}</div>`).join('')+
+    (add&&files.length<MAX_FILES?`<div class="panel"><div class="field"><label for="att_d">Descripción del archivo (opcional)</label><input id="att_d" maxlength="200" placeholder="Ej.: Guía de ejercicios, semana 3"></div>
+      <div class="row"><label class="btn btn-ghost btn-sm" for="att_f" style="cursor:pointer">Elegir archivo</label><input id="att_f" type="file" accept="${ACCEPT}" hidden data-chg="pickfile" data-ctx="${ctx}">
+      <span class="s">${pf?esc(pf.name)+' · '+fsize(pf.size):'PDF, DOC, DOCX, XLSX, PPTX, PNG o JPG · máx. 10 MB'}</span></div>
+      ${up?`<div class="bar" style="--c:var(--green);margin-top:12px"><i id="upbar" style="width:${Math.round(up.pct*100)}%"></i></div><span class="s">Subiendo… no cierres la página</span>`
+        :`<button class="btn btn-primary btn-sm" style="margin-top:12px" data-act="upload" data-ctx="${ctx}" ${pf?'':'disabled'}>Subir archivo</button>`}</div>`:'');
+}
+const qType=q=>q.t||'unica';
+const qCorr=q=>Array.isArray(q.c)?q.c:(q.c==null?[]:[q.c]);
+const blankQ=t=>({t,q:'',o:t==='abierta'?[]:['',''],c:[],pts:1});
+function initTE(id){
+  if(!id||id==='new'){ S.TE={id:null,title:'',desc:'',minutes:15,attempts:1,qs:[blankQ('unica')]}; return; }
+  const t=S.tests.find(x=>x.id===id); if(!t){ S.TE=null; return; }
+  S.TE={id:t.id,title:t.title,desc:t.desc||'',minutes:t.minutes||0,attempts:t.attempts||1,
+    qs:(t.questions||[]).map(q=>({t:qType(q),q:q.q,o:[...(q.o||[])],c:[...qCorr(q)],pts:q.pts||1}))};
+}
+const gradeSum=(g,res)=>g&&g.attempt===res.attempts?Object.values(g.graded||{}).reduce((a,b)=>a+(+b||0),0):null;
+function resultBlock(t,res,g){
+  const qs=t.questions||[], got=gradeSum(g,res), closedMax=res.max-res.openMax, total=res.auto+(got||0);
+  return `<div class="panel big"><div class="e">${total}/${res.max}</div><p class="s" style="font-size:15px">Cerradas: ${res.auto}/${closedMax}${res.openMax?` · Abiertas: ${got!==null?got+'/'+res.openMax:'pendientes de calificación'}`:''}</p></div>`+
+  qs.map((q,i)=>{ const a=res.answers?.[i]; let body;
+    if(qType(q)==='abierta') body=`<p class="s">Tu respuesta:</p><p>${rich(a||'')}</p><p>${got!==null?chip(`${g.graded?.[i]??0}/${q.pts||1} pts`,'ok'):chip('Pendiente de calificar','am')}</p>`;
+    else { const mine=qType(q)==='multiple'?(a||[]):[a];
+      body=q.o.map((o,k)=>`<div class="opt ${qCorr(q).includes(k)?'good':(mine.includes(k)?'bad':'')}" style="cursor:default"><span class="l">${LET[k]}</span><span class="t">${rich(o)}</span></div>`).join(''); }
+    return `<div class="panel"><p><b>${i+1}.</b> ${rich(q.q)}</p>${body}</div>`; }).join('');
+}
+function resultsPanel(t){
+  const R=S.cur?.results||[], Gs=S.cur?.grades||{}, qs=t.questions||[], opens=qs.map((q,i)=>qType(q)==='abierta'?i:-1).filter(i=>i>=0);
+  return `<p class="label">Resultados (${R.length})</p>`+(R.length?R.map(r=>{ const g=Gs[r.id], got=gradeSum(g,r);
+    return `<div class="panel"><div class="row"><span class="avatar">${ini(r.name)}</span><strong>${esc(r.name)}</strong><span style="margin-left:auto">${chip(`${r.auto+(got||0)}/${r.max}`,got!==null||!opens.length?'ok':'am')}</span></div>
+      <p class="s" style="margin:6px 0 10px">Intento ${r.attempts} · Cerradas ${r.auto}/${r.max-r.openMax}${opens.length?` · Abiertas ${got!==null?got+'/'+r.openMax:'sin calificar'}`:''}</p>
+      ${opens.map(i=>`<div class="field"><label>${i+1}. ${rich(qs[i].q)}</label><div class="panel" style="margin:0">${rich(r.answers?.[i]||'—')}</div>
+        <label for="gr_${r.id}_${i}">Puntos (0 a ${qs[i].pts||1})</label><input id="gr_${r.id}_${i}" type="number" min="0" max="${qs[i].pts||1}" step="0.5" value="${got!==null?(g.graded?.[i]??''):''}"></div>`).join('')}
+      ${opens.length?`<button class="btn btn-primary btn-sm" data-act="tgrade" data-uid="${r.id}">Guardar calificación</button>`:''}</div>`; }).join(''):empty('Nadie ha respondido todavía.'));
+}
+function qEditor(q,i){
+  const multi=q.t==='multiple';
+  return `<div class="panel"><div class="row" style="margin-bottom:10px"><b>Pregunta ${i+1}</b>
+    <select data-chg="tetype" data-qi="${i}" aria-label="Tipo de pregunta" style="width:auto"><option value="unica" ${q.t==='unica'?'selected':''}>Opción única</option><option value="multiple" ${multi?'selected':''}>Varias respuestas</option><option value="abierta" ${q.t==='abierta'?'selected':''}>Abierta</option></select>
+    <input type="number" min="1" max="100" data-te="pts" data-qi="${i}" value="${q.pts}" style="width:76px" aria-label="Puntos"><span class="s">pts</span>
+    <button class="link" style="margin-left:auto" data-act="tedelq" data-qi="${i}">Eliminar</button></div>
+    <div class="field"><textarea data-te="q" data-qi="${i}" placeholder="Escribe la pregunta (puedes usar $fórmulas$)" style="min-height:70px">${esc(q.q)}</textarea></div>
+    ${q.t==='abierta'?`<p class="s">Pregunta abierta: la respuesta la califica el docente.</p>`:
+      q.o.map((o,j)=>`<div class="row" style="margin-bottom:8px;flex-wrap:nowrap"><input type="${multi?'checkbox':'radio'}" name="c${i}" data-chg="tecorr" data-qi="${i}" data-oi="${j}" ${q.c.includes(j)?'checked':''} aria-label="Marcar como correcta"><input data-te="o" data-qi="${i}" data-oi="${j}" value="${esc(o)}" placeholder="Opción ${j+1}"><button class="link" data-act="tedelo" data-qi="${i}" data-oi="${j}" aria-label="Quitar opción">✕</button></div>`).join('')
+      +`<button class="btn btn-ghost btn-sm" data-act="teaddo" data-qi="${i}">+ Opción</button><p class="s" style="margin-top:8px">Marca ${multi?'todas las correctas':'la correcta'} con el botón de la izquierda.</p>`}</div>`;
+}
+
+
+/* ---------- pregunta (lecciones y laberinto) ---------- */
+function qHTML(q,res,nextText){
+  let h=`<span class="mchip" style="--c:${mcolor(q.m)}">${esc(METHODS[q.m]||'Ejercicio')}</span>`;
+  if(q.q) h+=`<p class="qtext">${rich(q.q)}</p>`;
+  h+=q.t==='tf'?`<p class="qtext" style="font-size:18px">${rich(q.s)}</p>`:`<div class="formula">${tex(q.f,true)}</div>`;
+  if(q.t==='num'){
+    h+=`<div class="numrow"><input id="numin" data-nokeep inputmode="decimal" autocomplete="off" placeholder="Ej.: 8/3 o 2.67" ${res?`disabled value="${esc(res.val)}"`:''}>
+      <button class="btn btn-primary btn-sm" data-act="qnum" ${res?'disabled':''}>Comprobar</button></div>`;
+  } else {
+    h+=`<p class="qtext">${q.t==='tf'?'¿Verdadero o falso?':'Elige la respuesta correcta:'}</p><div class="opts ${res?'locked':''}">`+
+      q.opts.map((o,k)=>`<button class="opt ${res?(o.ok?'good':(k===res.k?'bad':'')):''}" data-act="qa" data-k="${k}"><span class="l">${LET[k]}</span><span class="t">${q.t==='tf'?esc(o.t):tex(o.t)}</span></button>`).join('')+'</div>';
+  }
+  if(res){
+    const right=q.t==='num'?tex(ansTex(q.ans)):q.t==='tf'?esc(q.opts.find(o=>o.ok).t):tex(q.opts.find(o=>o.ok).t);
+    h+=`<div class="fb ${res.ok?'ok':'ko'}"><strong>${res.ok?'¡Correcto!':'Incorrecto'}</strong>${res.ok?'':`<span>Respuesta correcta: ${right}</span>`}<span>${rich(q.e)}</span></div>
+      <div class="stack"><button class="btn btn-primary" data-act="qnext">${nextText}</button></div>`;
+  }
+  return h;
+}
+function numAnswer(q){ const v=$('#numin')?.value||''; const c=checkNum(v,q.ans); if(c===null){ toast('Escribe un número: entero, decimal o fracción (a/b).'); return null; } return {ok:c,val:v}; }
+
+/* ---------- vistas ---------- */
+const VIEWS={
+  setup:()=>`<div class="auth"><span class="logo">∫NTEGRALAB</span><p class="t">Falta conectar Firebase</p>
+    <div class="panel"><p>Abre <b>config.js</b> y pega la configuración de tu app web de Firebase. Los pasos están en el archivo <b>README.md</b>.</p></div></div>`,
+
+  auth(){
+    const reg=S.authTab==='reg';
+    return `<div class="auth"><span class="logo">∫NTEGRALAB</span><p class="t">Aprende cálculo integral paso a paso</p>
+      <div class="tabs"><button class="${reg?'':'on'}" data-act="tab" data-v="login">Ingresar</button><button class="${reg?'on':''}" data-act="tab" data-v="reg">Crear cuenta</button></div>
+      ${S.authErr?`<div class="err">${esc(S.authErr)}</div>`:''}
+      <form data-form="auth">
+        ${reg?`<div class="field"><label for="a_name">Nombre completo</label><input id="a_name" required autocomplete="name"></div>`:''}
+        <div class="field"><label for="a_mail">Correo</label><input id="a_mail" type="email" required autocomplete="email"></div>
+        <div class="field"><label for="a_pass">Contraseña</label><input id="a_pass" type="password" required minlength="6" autocomplete="${reg?'new-password':'current-password'}"></div>
+        <button class="btn btn-primary" type="submit">${reg?'Crear cuenta':'Ingresar'}</button>
+      </form>
+      ${reg?`<p class="note" style="margin-top:14px">Al registrarte quedas como estudiante. Un docente o administrador debe darte acceso al curso.</p>`:''}</div>`;
+  },
+  stuck:()=>`<div class="auth"><span class="logo">∫NTEGRALAB</span><div class="note" style="margin-top:20px">Está tardando más de lo normal. Revisa tu conexión y que en Firebase estén creadas la base de datos Firestore y publicadas las reglas.</div><div class="stack"><button class="btn btn-primary" data-act="reload">Reintentar</button><button class="btn btn-ghost" data-act="logout">Cerrar sesión</button></div></div>`,
+  fatal:()=>`<div class="auth"><span class="logo">∫NTEGRALAB</span><div class="err" style="margin-top:20px">${esc(S.fatal)}</div><button class="btn btn-ghost" data-act="logout">Salir</button></div>`,
+  pending:()=>`<div class="auth"><span class="logo">∫NTEGRALAB</span><p class="t">Hola, ${esc(S.profile.name)}</p>
+    <div class="panel"><strong>Tu cuenta aún no tiene acceso al curso</strong><p style="margin-top:6px">Pide a un docente o administrador que te lo active con tu correo <b>${esc(S.profile.email)}</b>. Esta pantalla se actualiza sola cuando te den acceso.</p></div>
+    <button class="btn btn-ghost" data-act="logout">Salir</button></div>`,
+
+  home(){
+    const b=k=>newN(k)?`<span class="badge">${newN(k)} nuevo${newN(k)>1?'s':''}</span>`:'';
+    const st=streakNow(), done=Object.keys(S.prog.done).length;
+    const mi=(go,c,ic,t,s,badge='')=>`<button class="mi c-${c}" data-go="${go}"><span class="ic">${ic}</span><span>${t}<small>${s}</small></span>${badge}</button>`;
+    return `<header class="hero"><div class="hero-top"><span class="logo">∫NTEGRALAB</span><button class="link" data-act="logout">Salir</button></div>
+      <p class="hello">Hola, <b>${esc(S.profile.name)}</b> ${chip(ROLE[role()],'pu')}</p></header>
+      <button class="streak" data-go="racha/${firstUnit()}"><span class="n">${st}</span><span><b>${st===1?'día':'días'} de racha</b><small>${done} de ${allTotal()} lecciones · toca para continuar</small></span></button>
+      <div class="banner"><img src="${BANNER_IMAGE}" alt="Banner de IntegraLab" onerror="this.style.display='none'"></div>
+      <p class="label">Menú principal</p>
+      <nav class="menu">
+        ${mi('foro','red','F','Foro','Resuelve dudas con tus compañeros',b('threads'))}
+        ${mi('act','teal','A','Actividades','Entregas y tareas',b('acts'))}
+        ${mi('uni','purple','U','Unidades didácticas','Tu ruta de contenidos',b('units'))}
+        ${mi('tests','amber','T','Test evaluativos','Mide lo que has aprendido',b('tests'))}
+        ${isStaff()?mi('usuarios','ink','Us','Usuarios y accesos','Roles y acceso al curso',S.users.some(u=>u.role==='estudiante'&&!u.enrolled)?`<span class="badge">${S.users.filter(u=>u.role==='estudiante'&&!u.enrolled).length} pendientes</span>`:''):''}
+      </nav>`;
+  },
+
+  /* ----- Foro ----- */
+  foro(id){
+    if(!id){ const l=[...S.threads].sort(byNew);
+      return top('Foro')+`<button class="btn btn-primary" data-act="newThread">Nuevo hilo</button><div class="stack" style="margin-top:14px">
+        ${l.length?l.map(t=>`<button class="card" data-go="foro/${t.id}"><span class="avatar">${ini(t.name)}</span><span class="body"><strong>${esc(t.title)}</strong><span class="s">${esc(t.name)} · ${fdate(t.createdAt)}</span></span></button>`).join(''):empty('Aún no hay hilos. ¡Abre el primero!')}</div>`; }
+    const t=S.threads.find(x=>x.id===id); if(!t) return top('Foro','foro')+empty('Este hilo ya no existe.');
+    const reps=S.cur?.replies||[], can=x=>isStaff()||x.uid===S.user.uid;
+    return top('Detalle del hilo','foro')+`<div class="panel"><div class="row" style="margin-bottom:8px"><span class="avatar">${ini(t.name)}</span><div><strong>${esc(t.title)}</strong><br><span style="font-size:13px;color:var(--soft);font-weight:600">${esc(t.name)} · ${fdate(t.createdAt)}</span></div></div><p>${rich(t.body)}</p>
+      ${can(t)?`<p style="margin-top:10px"><button class="link" data-act="delThread" data-id="${t.id}">Eliminar hilo</button></p>`:''}</div>
+      <p class="label">${reps.length} respuesta${reps.length===1?'':'s'}</p>
+      ${reps.map(r=>`<div class="card" style="align-items:flex-start"><span class="avatar">${ini(r.name)}</span><span class="body"><strong>${esc(r.name)} ${r.role!=='estudiante'?chip(ROLE[r.role],'pu'):''}</strong><span class="s" style="color:var(--ink)">${rich(r.text)}</span>${can(r)?`<br><button class="link" data-act="delReply" data-id="${r.id}">Eliminar</button>`:''}</span></div>`).join('')}
+      <form data-form="reply"><div class="field"><textarea id="reply_t" placeholder="Escribe una respuesta… (puedes usar $fórmulas$)" required></textarea></div><button class="btn btn-primary" type="submit">Responder</button></form>`;
+  },
+
+  /* ----- Actividades ----- */
+  act(id){
+    if(!id){ const l=[...S.acts].sort((a,b)=>(a.due||'9').localeCompare(b.due||'9'));
+      return top('Actividades')+(isStaff()?`<button class="btn btn-primary" data-act="newAct">Nueva actividad</button>`:'')+`<div class="stack" style="margin-top:14px">
+        ${l.length?l.map(a=>`<button class="card" data-go="act/${a.id}"><span class="num" style="--c:var(--teal)">A</span><span class="body"><strong>${esc(a.title)}</strong><span class="s">Entrega: ${fdue(a.due)}</span></span></button>`).join(''):empty('No hay actividades publicadas.')}</div>`; }
+    const a=S.acts.find(x=>x.id===id); if(!a) return top('Actividades','act')+empty('Esta actividad ya no existe.');
+    let h=top('Detalle de actividad','act')+`<h3 style="font-size:22px">${esc(a.title)}</h3><div class="row" style="margin:8px 0">${chip('Entrega: '+fdue(a.due),'am')}${a.closeAfter?chip(actClosed(a)?'Cerrada':'No recibe entregas tardías',actClosed(a)?'ko':''):chip('Recibe entregas tardías','ok')}</div>
+      <div class="panel"><p>${rich(a.desc)}</p></div>
+      ${isStaff()?`<div class="row">${staffBtn('Editar','editAct',a.id)}${staffBtn('Eliminar','delAct',a.id)}</div>`:''}`
+      +attachPanel('act:'+id,a.files,{edit:isStaff(),add:isStaff(),label:'Archivos de la actividad'});
+    if(isStaff()){
+      const subs=S.cur?.subs||[];
+      h+=`<p class="label">Entregas (${subs.length})</p>`+(subs.length?subs.map(x=>`<div class="panel"><div class="row"><span class="avatar">${ini(x.name)}</span><strong>${esc(x.name)}</strong>${a.dueTs&&x.updatedAt>a.dueTs?chip('Entrega tardía','ko'):''}<span style="margin-left:auto">${x.grade!=null?chip('Nota '+x.grade,'ok'):chip('Sin calificar','am')}</span></div>
+        ${x.text?`<p style="margin:10px 0">${rich(x.text)}</p>`:''}${safeUrl(x.link)?`<p><a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer">Ver enlace</a></p>`:''}
+        ${attachPanel('subv:'+x.id,x.files,{label:'Archivos entregados'})}
+        <div class="field" style="margin-top:10px"><label for="g_${x.id}">Nota (0 a 5)</label><input id="g_${x.id}" type="number" min="0" max="5" step="0.1" value="${x.grade??''}"></div>
+        <div class="field"><label for="fb_${x.id}">Comentario</label><textarea id="fb_${x.id}" style="min-height:70px">${esc(x.feedback||'')}</textarea></div>
+        <button class="btn btn-primary btn-sm" data-act="grade" data-id="${x.id}">Guardar nota</button></div>`).join(''):empty('Nadie ha entregado todavía.'));
+    } else {
+      const x=S.cur?.sub, closed=actClosed(a);
+      h+=`<p class="label">Tu entrega ${x?chip('Entregada','ok'):chip('Pendiente','am')}</p>`;
+      if(x?.grade!=null) h+=`<div class="panel"><strong>Nota: ${x.grade}</strong>${x.feedback?`<p style="margin-top:6px">${rich(x.feedback)}</p>`:''}</div>`;
+      if(closed){
+        h+=`<p class="note" style="background:#FBE6E8;color:#6E1B24">El plazo terminó el ${fdue(a.due)} y el docente no recibe entregas después de esa fecha.</p>`;
+        if(x?.text) h+=`<div class="panel"><p>${rich(x.text)}</p></div>`;
+        h+=attachPanel('subv:'+id,x?.files,{label:'Tus archivos'});
+      } else {
+        h+=`<form data-form="sub"><div class="field"><textarea id="sub_t" placeholder="Escribe aquí tu desarrollo…">${esc(x?.text||'')}</textarea></div>
+          <div class="field"><label for="sub_l">Enlace (opcional)</label><input id="sub_l" type="url" placeholder="https://" value="${esc(x?.link||'')}"></div>
+          <button class="btn btn-primary" type="submit">${x?'Actualizar entrega':'Enviar actividad'}</button></form>`
+          +attachPanel('sub:'+id,x?.files,{edit:true,add:true,label:'Tus archivos'});
+      }
+    }
+    return h+`<div class="stack"><button class="btn btn-ghost" data-go="act">Volver a actividades</button></div>`;
+  },
+
+  /* ----- Unidades ----- */
+  uni(id){
+    if(!id){ const l=[...S.units].sort((a,b)=>(a.order||0)-(b.order||0));
+      return top('Unidades didácticas')+(isStaff()?`<button class="btn btn-primary" data-act="newUnit">Nueva unidad</button>`:'')+`<div class="stack" style="margin-top:14px">
+        ${l.length?l.map((u,i)=>{ const p=P(u.id); const pc=p?Math.round(uCount(p)/uTotal(p)*100):null;
+          return `<button class="card" data-go="uni/${u.id}"><span class="num" style="--c:${p?p.color:'var(--primary)'}">${i+1}</span><span class="body"><strong>${esc(u.title)}</strong>${p?`<span class="bar" style="display:block;--c:${p.color}"><i style="width:${pc}%"></i></span><span class="s">${pc}% completado</span>`:''}</span></button>`; }).join(''):empty('No hay unidades publicadas.')}</div>`; }
+    const u=S.units.find(x=>x.id===id); if(!u) return top('Unidades','uni')+empty('Esta unidad ya no existe.');
+    const p=P(u.id);
+    return top('Detalle de unidad','uni')+`<h3 style="font-size:22px">${esc(u.title)}</h3>
+      <div class="panel" style="margin-top:12px"><p>${rich(u.desc)}</p></div>
+      ${p?`<div class="panel"><strong>Tu avance: ${uCount(p)} de ${uTotal(p)} lecciones</strong><div class="bar" style="--c:${p.color}"><i style="width:${uCount(p)/uTotal(p)*100}%"></i></div></div>
+        <button class="btn btn-primary" data-go="racha/${p.id}">Practicar en el camino de racha</button>`:''}
+      ${(u.resources||[]).length?`<p class="label">Recursos</p><div class="panel"><ul>${u.resources.map(r=>safeUrl(r.u)?`<li><a href="${esc(r.u)}" target="_blank" rel="noopener noreferrer">${esc(r.t)}</a></li>`:`<li>${esc(r.t)}</li>`).join('')}</ul></div>`:''}
+      ${attachPanel('unit:'+u.id,u.files,{edit:isStaff(),add:isStaff(),label:'Material adjunto'})}
+      ${isStaff()?`<div class="row" style="margin-top:12px">${staffBtn('Editar','editUnit',u.id)}${staffBtn('Eliminar','delUnit',u.id)}</div>`:''}
+      <div class="stack"><button class="btn btn-ghost" data-go="uni">Volver a unidades</button></div>`;
+  },
+
+  /* ----- Tests (tipo Forms: preguntas cerradas y abiertas) ----- */
+  tests(){
+    const l=[...S.tests].sort(byNew);
+    return top('Test evaluativos')+(isStaff()?`<button class="btn btn-primary" data-go="testedit/new">Nuevo test</button>`:'')+`<div class="stack" style="margin-top:14px">
+      ${l.length?l.map(t=>`<button class="card" data-go="test/${t.id}"><span class="num" style="--c:var(--amber)">T</span><span class="body"><strong>${esc(t.title)}</strong><span class="s">${(t.questions||[]).length} preguntas${t.minutes?` · ${t.minutes} min sugeridos`:''}</span></span></button>`).join(''):empty('No hay tests publicados.')}</div>`;
+  },
+  testedit(){
+    if(!isStaff()) return top('Test','tests')+empty('Solo docentes y administradores.');
+    const E=S.TE; if(!E) return top('Test','tests')+(S.loaded?.tests?empty('No se encontró el test.'):'<p class="center">Cargando…</p>');
+    return top(E.id?'Editar test':'Nuevo test','tests')+`<div class="panel"><div class="field"><label>Título</label><input data-te="title" value="${esc(E.title)}"></div>
+      <div class="field"><label>Descripción o instrucciones</label><textarea data-te="desc" style="min-height:80px">${esc(E.desc)}</textarea></div>
+      <div class="row"><div class="field" style="flex:1"><label>Duración sugerida (min)</label><input type="number" min="0" data-te="minutes" value="${E.minutes}"></div>
+      <div class="field" style="flex:1"><label>Intentos permitidos</label><input type="number" min="1" max="5" data-te="attempts" value="${E.attempts}"></div></div></div>
+      ${E.qs.map(qEditor).join('')}
+      <div class="row"><button class="btn btn-ghost btn-sm" data-act="teaddq" data-t="unica">+ Opción única</button><button class="btn btn-ghost btn-sm" data-act="teaddq" data-t="multiple">+ Varias respuestas</button><button class="btn btn-ghost btn-sm" data-act="teaddq" data-t="abierta">+ Abierta</button></div>
+      <div class="stack"><button class="btn btn-primary" data-act="tesave">Publicar test</button><button class="btn btn-ghost" data-go="tests">Cancelar</button></div>`;
+  },
+  test(id){
+    const t=S.tests.find(x=>x.id===id), T=S.T; if(!t||!T) return top('Test','tests')+(S.loaded?.tests?empty('Este test ya no existe.'):'<p class="center">Cargando…</p>');
+    const qs=t.questions||[], maxA=t.attempts||1, back=`<div class="stack"><button class="btn btn-ghost" data-go="tests">Volver a tests</button></div>`;
+    let h=top(esc(t.title),'tests')+(t.desc?`<div class="panel"><p>${rich(t.desc)}</p></div>`:'')
+      +`<div class="row" style="margin-bottom:12px">${chip(qs.length+' preguntas')}${t.minutes?chip(t.minutes+' min sugeridos'):''}${chip(maxA+(maxA===1?' intento':' intentos'))}</div>`;
+    if(isStaff()) return h+`<div class="row" style="margin-bottom:12px"><button class="btn btn-ghost btn-sm" data-go="testedit/${t.id}">Editar</button>${staffBtn('Eliminar','delTest',t.id)}</div>`+resultsPanel(t)
+      +`<p class="label">Vista previa</p>`+qs.map((q,i)=>`<div class="panel"><p><b>${i+1}.</b> ${rich(q.q)} ${chip((q.pts||1)+' pt')}</p>${qType(q)==='abierta'?'<p class="s">Respuesta abierta</p>':q.o.map((o,k)=>`<div class="opt ${qCorr(q).includes(k)?'good':''}" style="cursor:default"><span class="l">${LET[k]}</span><span class="t">${rich(o)}</span></div>`).join('')}</div>`).join('')+back;
+    if(T.loading) return h+'<p class="center">Cargando…</p>';
+    const used=T.prev?.attempts||0;
+    if(T.done) return h+resultBlock(t,T.prev,T.grade)+(used<maxA?`<div class="stack"><button class="btn btn-ghost" data-act="tretake">Hacer otro intento (${maxA-used} disponible${maxA-used>1?'s':''})</button></div>`:'')+back;
+    if(T.prev&&!T.retake) return h+(used>=maxA?`<p class="note">Ya usaste ${maxA===1?'tu único intento':'tus '+maxA+' intentos'}.</p>`:'')+resultBlock(t,T.prev,T.grade)
+      +(used<maxA?`<div class="stack"><button class="btn btn-primary" data-act="tretake">Hacer otro intento (${maxA-used} disponible${maxA-used>1?'s':''})</button></div>`:'')+back;
+    return h+`<p class="note">Intento ${used+1} de ${maxA}. Responde todas las preguntas antes de enviar.${qs.some(q=>qType(q)==='abierta')?' Las preguntas abiertas las califica tu docente.':''}</p>
+      ${qs.map((q,i)=>`<div class="panel"><p><b>${i+1}.</b> ${rich(q.q)} ${chip((q.pts||1)+' pt')}</p>
+        ${qType(q)==='abierta'?`<textarea data-ta="${i}" placeholder="Escribe tu respuesta…">${esc(T.ans[i]||'')}</textarea>`
+          :(qType(q)==='multiple'?'<p class="s">Puede haber más de una respuesta correcta.</p>':'')+q.o.map((o,k)=>{ const sel=qType(q)==='multiple'?(T.ans[i]||[]).includes(k):T.ans[i]===k;
+            return `<button class="opt ${sel?'sel':''}" data-act="tpick" data-q="${i}" data-k="${k}"><span class="l">${sel&&qType(q)==='multiple'?'✓':LET[k]}</span><span class="t">${rich(o)}</span></button>`; }).join('')}</div>`).join('')}
+      <div class="stack"><button class="btn btn-primary" data-act="tsubmit">Enviar test</button><button class="btn btn-ghost" data-go="tests">Volver a tests</button></div>`;
+  },
+
+  /* ----- Camino de racha ----- */
+  racha(uid){
+    const ui=Math.max(0,PATHS.findIndex(p=>p.id===uid)), p=PATHS[ui];
+    const ROW=112, PADY=62, xs=[50,24,72,28,68,36], H=PADY*2+ROW*(p.nodes.length-1);
+    const pts=p.nodes.map((_,i)=>({x:xs[i%xs.length],y:PADY+ROW*i}));
+    let d=`M ${pts[0].x} ${pts[0].y}`; for(let i=1;i<pts.length;i++){ const a=pts[i-1],b=pts[i],m=(a.y+b.y)/2; d+=` C ${a.x} ${m}, ${b.x} ${m}, ${b.x} ${b.y}`; }
+    const cur=p.nodes.findIndex((_,n)=>nOpen(p.id,n)&&!nDone(p.id,n));
+    return top('Camino de racha')+`<div class="utabs">${PATHS.map((q,i)=>`<button class="utab ${i===ui?'on':''}" style="--c:${q.color}" data-go="racha/${q.id}">${q.short}<small>${uCount(q)}/${uTotal(q)}${skipped(i)?' · pendiente':''}</small></button>`).join('')}</div>
+      <p class="note">Cada círculo tiene 5 lecciones y exige terminar el anterior; el último de cada camino (Repaso general) es un juego. Puedes saltarte un camino: sus lecciones quedan como no hechas hasta que las completes.</p>
+      ${skipped(ui)?`<p class="note" style="background:#FBE6E8;color:#6E1B24">Saltaste este camino: tienes ${uTotal(p)-uCount(p)} lecciones pendientes aquí.</p>`:''}
+      <div class="path" style="height:${H}px"><svg viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="#B7C0DA" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 13" vector-effect="non-scaling-stroke"/></svg>
+      ${p.nodes.map((n,i)=>{ const open=nOpen(p.id,i), dn=nDone(p.id,i), st=dn?'done':!open?'lock':i===cur?'cur':'';
+        return `<div class="node ${st}" style="left:${pts[i].x}%;top:${pts[i].y}px;--c:${p.color}"><button class="b" ${open?`data-go="nodo/${p.id}/${i}"`:'data-act="locked"'} aria-label="${esc(n.t)}">${nCount(p.id,i)}/${n.lessons}</button><span>${esc(n.t)}${n.repaso?' · juego':''}</span></div>`; }).join('')}</div>
+      <button class="btn btn-ghost" data-go="home">Volver al inicio</button>`;
+  },
+  nodo(u,n){
+    const p=P(u), node=p?.nodes[+n]; if(!node||!nOpen(u,+n)) return VIEWS.racha(u);
+    const sub=node.game==='maze'?'Laberinto de integrales':node.game==='drop'?'Atrapa las respuestas correctas':node.repaso?'Reto de ejercicios (pronto, un juego)':'5 ejercicios';
+    return top(esc(node.t),`racha/${u}`)+`<div class="panel"><strong>${nCount(u,+n)} de ${node.lessons} ${node.repaso?'juego':'lecciones'}</strong><div class="bar" style="--c:${p.color}"><i style="width:${nCount(u,+n)/node.lessons*100}%"></i></div></div>
+      ${[...Array(node.lessons).keys()].map(l=>{ const open=lOpen(u,+n,l), dn=lDone(u,+n,l);
+        return `<div class="lrow ${open?'':'lock'}"><span class="num" style="--c:${dn?'var(--green)':open?p.color:'#9AA4BD'}">${dn?'✓':l+1}</span><span class="body"><strong>${node.repaso?'Juego de repaso':'Lección '+(l+1)}</strong><br><span class="s">${esc(node.repaso?sub:sub)}</span></span>
+        ${open?`<button class="btn btn-primary btn-sm" data-go="${node.game?`juego/${u}`:`leccion/${u}/${n}/${l}`}">${dn?'Repetir':'Empezar'}</button>`:chip('Bloqueada')}</div>`; }).join('')}`;
+  },
+
+  /* ----- Lección ----- */
+  leccion(){
+    const L=S.L; if(!L) return top('Lección','home')+(S.progLoaded?empty('Lección no disponible.'):'<p class="center">Cargando lección…</p>');
+    const p=P(L.u), node=p.nodes[L.n], t=`${node.t} · ${node.repaso?'Juego':'Lección '+(L.l+1)}`;
+    if(L.end){ const ok=L.ok>=PASS;
+      return top(esc(t),`nodo/${L.u}/${L.n}`)+`<div class="panel big"><div class="e" style="color:${ok?'var(--green)':'var(--red)'}">${L.ok}/${L.qs.length}</div>
+        <h3>${ok?'¡Lección completada!':'Casi. Necesitas '+PASS+' aciertos'}</h3><p style="color:var(--soft);font-weight:700;margin-top:6px">${ok?'Tu avance quedó guardado y la racha del día suma.':'Inténtalo de nuevo: los ejercicios cambian.'}</p></div>
+        <div class="stack">${ok?`<button class="btn btn-primary" data-go="nodo/${L.u}/${L.n}">Continuar</button>`:`<button class="btn btn-primary" data-act="lretry">Reintentar</button><button class="btn btn-ghost" data-go="nodo/${L.u}/${L.n}">Volver</button>`}</div>`; }
+    const q=L.qs[L.i];
+    return top(esc(t),`nodo/${L.u}/${L.n}`)+`<div class="progress"><i style="width:${L.i/L.qs.length*100}%"></i></div>`+qHTML(q,L.res,L.i<L.qs.length-1?'Siguiente':'Ver resultado');
+  },
+
+  /* ----- Juegos del Repaso general ----- */
+  juego(u){
+    const p=P(u), ni=p?p.nodes.length-1:0, g=p?.nodes[ni].game;
+    if(!g) return top('Juego','racha/u1')+empty('Este círculo todavía no tiene un juego.');
+    const back=`nodo/${u}/${ni}`, keyhint=`<p id="keyhint" class="hidden"><span class="kbd">A</span><span class="kbd">D</span> mover · Mouse para responder</p>`;
+    if(g==='drop') return top('Repaso general · Juego',back)+`<div class="dhud" id="dhud"></div>
+      <div id="dwrap"><div id="darena"><div class="dbg" aria-hidden="true"><div class="dband b1"></div><div class="dband b2"></div><div class="dband b3"></div><div class="dsun"></div>
+          <div class="dcloud c1"></div><div class="dcloud c2"></div><div class="dcloud c3"></div><div class="dcloud c4"></div><div class="dcloud c5"></div>
+          <span class="dsym s1">∑</span><span class="dsym s2">π</span><span class="dsym s3">∞</span><span class="dsym s4">√</span><span class="dsym s5">∫</span><span class="dsym s6">θ</span><span class="dsym s7">Δ</span><span class="dsym s8">dx</span>
+          <svg class="dhills" viewBox="0 0 400 150" preserveAspectRatio="none"><path d="M0 150V78C40 46 96 44 140 74S226 104 268 62 352 34 400 70V150Z" fill="#AFC3EE"/><path d="M0 150V108C48 84 112 86 164 106S272 122 322 98 382 86 400 96V150Z" fill="#8FAAE0"/></svg>
+          <div class="dtree" style="left:8%"></div><div class="dtree" style="left:47%;height:30px"></div><div class="dtree" style="left:90%"></div>
+          <div class="dflower" style="left:22%"></div><div class="dflower f2" style="left:33%"></div><div class="dflower f3" style="left:62%"></div><div class="dflower" style="left:74%"></div><div class="dflower f2" style="left:3%"></div>
+          <div class="dground"></div></div><div class="dplayer" id="dplayer"><div class="dsign" id="dsign"></div><div class="dchar"><i></i></div></div></div>
+        <div class="goverlay" id="dintro"><div class="sheet"><h3>Atrapa la respuesta</h3>
+          <ul style="list-style:none;display:grid;gap:8px;font-weight:700;color:var(--soft);margin-bottom:14px">
+            <li>Tu personaje lleva una <b style="color:var(--ink)">integral</b> y del cielo caen 4 respuestas.</li>
+            <li>Muévete con <span class="kbd">A</span><span class="kbd">D</span> o las flechas (o arrastrando) y atrapa la <b style="color:var(--ink)">correcta</b>.</li>
+            <li>Si atrapas una incorrecta o dejas caer la correcta, pierdes una vida y cambia el ejercicio.</li>
+            <li>Atrapa <b style="color:var(--ink)">10 correctas</b>; tienes máximo <b style="color:var(--ink)">3 vidas</b>.</li></ul>
+          <button class="btn btn-primary" data-act="gstart">¡Jugar!</button></div></div>
+        <div class="goverlay hidden" id="dend"></div></div>
+      <div class="dpad2 hidden" id="dpad2"><button data-dir="l" aria-label="Izquierda">◀</button><button data-dir="r" aria-label="Derecha">▶</button></div>${keyhint}`;
+    return top('Repaso general · Juego',back)+`<div class="dhud" id="dhud"></div>
+      <div id="gwrap"><canvas id="gcanvas" aria-label="Laberinto de integrales de colores"></canvas>
+        <div class="goverlay" id="gintro"><div class="sheet"><h3>Laberinto de integrales</h3>
+          <ul style="list-style:none;display:grid;gap:8px;font-weight:700;color:var(--soft);margin-bottom:14px">
+            <li><b style="color:var(--ink)">Recoge integrales</b> tocándolas: te saldrá un ejercicio con un método al azar.</li>
+            <li>Al resolver <b style="color:var(--ink)">${NEED} del mismo color</b> se abre la puerta de ese color (las integrales sobrantes de ese color desaparecen).</li>
+            <li>Hay 5 colores esparcidos por varias salas y algunas puertas dependen de otras: entra y sal de las salas cuando lo necesites.</li>
+            <li>Si fallas, la integral sigue ahí. Usa el minimapa y llega a la <b style="color:var(--ink)">META</b>.</li>
+            <li><span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> o flechas para moverte; responde con el mouse o tocando.</li></ul>
+          <button class="btn btn-primary" data-act="gstart">¡Jugar!</button></div></div>
+        <div class="goverlay hidden" id="gwin"></div></div>
+      <div class="dpad hidden" id="dpad"><span></span><button data-dir="u" aria-label="Arriba">▲</button><span></span><button data-dir="l" aria-label="Izquierda">◀</button><button data-dir="d" aria-label="Abajo">▼</button><button data-dir="r" aria-label="Derecha">▶</button></div>
+      <p id="keyhint" class="hidden"><span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> mover · Mouse para responder</p>`;
+  },
+
+  /* ----- Usuarios ----- */
+  usuarios(){
+    if(!isStaff()) return top('Usuarios')+empty('Solo docentes y administradores.');
+    const l=[...S.users].sort((a,b)=>(a.enrolled===b.enrolled?0:a.enrolled?1:-1)||(a.name||'').localeCompare(b.name||''));
+    return top('Usuarios y accesos')+`<p class="note">Los estudiantes nuevos no ven el curso hasta que les des acceso.${isAdmin()?' Como administrador también puedes asignar el rol de docente.':''}</p>
+      ${l.map(u=>{ const me=u.id===S.user.uid, st=u.role==='estudiante';
+        return `<div class="urow"><span class="avatar">${ini(u.name)}</span><span class="body"><strong>${esc(u.name)}</strong><br><span style="font-size:13px;color:var(--soft);font-weight:600;word-break:break-all">${esc(u.email)}</span></span>
+          ${isAdmin()&&!me?`<select data-chg="urole" data-id="${u.id}" aria-label="Rol"><option value="estudiante" ${u.role==='estudiante'?'selected':''}>Estudiante</option><option value="docente" ${u.role==='docente'?'selected':''}>Docente</option>${u.role==='admin'?'<option value="admin" selected>Administrador</option>':''}</select>`:chip(ROLE[u.role],'pu')}
+          ${st?`<button class="btn ${u.enrolled?'btn-ghost':'btn-green'} btn-sm" data-act="uenroll" data-id="${u.id}" data-v="${u.enrolled?0:1}">${u.enrolled?'Quitar acceso':'Dar acceso'}</button>`:chip('Acceso total','ok')}</div>`; }).join('')||empty('Aún no hay usuarios.')}`;
+  }
+};
+
+/* ---------- render ---------- */
+function grabInputs(){ const m={}; document.querySelectorAll('#view input[id],#view textarea[id],#view select[id]').forEach(e=>{ if(e.hasAttribute('data-nokeep')||e.type==='file'||e.type==='checkbox'||e.type==='radio') return;
+  m[e.id]={v:e.value,f:document.activeElement===e,s:e.selectionStart}; }); return m; }
+function restoreInputs(m){ for(const id in m){ const e=document.getElementById(id); if(!e) continue; if(e.value!==m[id].v&&m[id].v!=='') e.value=m[id].v;
+  if(m[id].f){ e.focus(); try{ e.setSelectionRange(m[id].s,m[id].s); }catch(_){} } } }
+
+function render(){
+  try{ renderInner(); }catch(e){ console.error(e);
+    $('#view').innerHTML=`<div class="auth"><span class="logo">∫NTEGRALAB</span><div class="err" style="margin-top:20px">Error al mostrar la pantalla: ${esc(e.message)}</div><div class="stack"><button class="btn btn-primary" data-act="reload">Recargar</button><button class="btn btn-ghost" data-act="logout">Cerrar sesión</button></div></div>`; }
+}
+function renderInner(){
+  const name=routeName(), v=$('#view'), [,a,b]=parts();
+  $('#app').classList.toggle('wide',name==='juego'&&!!S.user);
+  let html;
+  if(!CONFIGURED) html=VIEWS.setup();
+  else if(S.fatal) html=VIEWS.fatal();
+  else if(!S.ready) html='<p class="center">Cargando…</p>';
+  else if(!S.user) html=VIEWS.auth();
+  else if(!S.profile) html=S.stuck?VIEWS.stuck():'<p class="center">Preparando tu perfil…</p>';
+  else if(!canUse()) html=VIEWS.pending();
+  else html=(VIEWS[name]||VIEWS.home)(a,b);
+  const keep=grabInputs(); v.innerHTML=html; restoreInputs(keep);
+  const h=location.hash; if(h!==S.lastHash){ S.lastHash=h; window.scrollTo(0,0); }
+  if(S.user&&S.profile){ const sk={foro:'threads',act:'acts',tests:'tests',uni:'units'}[name]; if(sk&&!a) markSeen(sk); }
+  if(name==='juego'&&S.user&&canUse()) setupGame();
+}
+
+/* ---------- lecciones ---------- */
+function startLesson(u,n,l){
+  const p=P(u);
+  S.L=null; if(!S.progLoaded) return;          // al recargar, espera a que llegue el progreso
+  if(!p||!p.nodes[n]||!lOpen(u,n,l)){ if(S.prog) setTimeout(()=>go(p?`nodo/${u}/${n}`:'racha/u1'),0); return; }
+  S.L={u,n,l,qs:lessonQuestions(p.nodes[n].pool,l).map(prep),i:0,ok:0,res:null,end:false};
+  S.qh={
+    answer:k=>{ const L=S.L,q=L.qs[L.i]; if(L.res) return; const ok=q.opts[k].ok; L.res={ok,k}; if(ok) L.ok++; render(); },
+    num:()=>{ const L=S.L,q=L.qs[L.i]; if(L.res) return; const r=numAnswer(q); if(!r) return; L.res=r; if(r.ok) L.ok++; render(); },
+    next:()=>{ const L=S.L; if(L.i<L.qs.length-1){ L.i++; L.res=null; } else { L.end=true; if(L.ok>=PASS) markLesson(L.u,L.n,L.l); } render(); }
+  };
+}
+
+/* ---------- laberinto ---------- */
+
+/* ---------- juego "atrapa la respuesta" (Antiderivadas) ---------- */
+const Drop=(()=>{
+  const GOAL=10, LIVES=3, PSPEED=300, COL=['#2D6CDF','#0E9F8E','#E5A00D','#D64550'], KEY={KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'};
+  let o,arena,pl,signEl,items=[],state='idle',raf=0,last=0,px=0,lives=3,score=0,q=null,AW=0,AH=0,PW=132,pTop=0,SH=48,fbT=0,fbEl=null;
+  const keys={l:false,r:false};
+  const hud=()=>{ o.hud.innerHTML=`<span class="dchip"><i style="--c:#D64550"></i>Vidas ${'♥'.repeat(lives)}${'♡'.repeat(LIVES-lives)}</span><span class="dchip"><i style="--c:#2E9E5B"></i>Aciertos ${score}/${GOAL}</span>`; };
+  const layout=()=>{ AW=arena.clientWidth; AH=arena.clientHeight; PW=pl.offsetWidth; SH=signEl.offsetHeight; pTop=AH-pl.offsetHeight-18; };
+  const setX=x=>{ px=Math.max(0,Math.min(AW-PW,x)); pl.style.transform=`translateX(${px}px)`; };
+  const clearItems=()=>{ items.forEach(i=>i.el.remove()); items=[]; if(fbEl){ fbEl.remove(); fbEl=null; } };
+  function newRound(){
+    clearItems(); q=dropQuestion(); signEl.innerHTML=tex(q.f); layout();
+    const opts=shuffle(q.o.map((t,i)=>({t,ok:i===0}))), slot=AW/4, w=Math.min(slot-8,150);
+    opts.forEach((op,k)=>{ const el=document.createElement('div'); el.className='ditem'; el.style.cssText=`--c:${COL[k]};width:${w}px`; el.innerHTML=tex(op.t); arena.appendChild(el);
+      const it={el,ok:op.ok,x:k*slot+(slot-w)/2,y:-70-Math.random()*90,w,h:el.offsetHeight||50,active:true}; el.style.transform=`translate(${it.x}px,${it.y}px)`; items.push(it); });
+    state='play';
+  }
+  function resolve(ok,why){
+    state='fb'; items.forEach(i=>{ i.el.style.opacity=.35; });
+    fbEl=document.createElement('div'); fbEl.className='dfb '+(ok?'ok':'ko');
+    if(ok){ score++; fbT=.6; fbEl.textContent='¡Correcta!'; } else { lives--; fbT=1.7; fbEl.innerHTML=`${why}<br><span style="font-weight:700">Era: ${tex(q.o[0])}</span>`; }
+    arena.appendChild(fbEl); hud();
+  }
+  function update(dt){
+    if(state==='fb'){ fbT-=dt; if(fbT<=0){ if(score>=GOAL){ state='end'; clearItems(); o.win({score,lives}); } else if(lives<=0){ state='end'; clearItems(); o.lose({score}); } else newRound(); } return; }
+    if(state!=='play') return;
+    const dir=(keys.r?1:0)-(keys.l?1:0); if(dir) setX(px+dir*PSPEED*dt);
+    const spd=58+score*3;            // más lento que antes: da tiempo de pensar (≈ 9 s de caída al inicio)
+    for(const it of items){ if(!it.active) continue; it.y+=spd*dt; it.el.style.transform=`translate(${it.x}px,${it.y}px)`;
+      const off=Math.abs(it.x+it.w/2-(px+PW/2));       // se atrapa lo que cae centrado sobre la cesta
+      if(it.y+it.h>=pTop+6&&it.y<=pTop+SH&&off<46){ it.active=false; resolve(it.ok,'Esa no era la correcta'); return; }
+      if(it.y>AH){ it.active=false; it.el.remove(); if(it.ok){ resolve(false,'Se te escapó la correcta'); return; } } }
+  }
+  function loop(ts){ raf=requestAnimationFrame(loop); const dt=Math.min(.033,(ts-last)/1000||0); last=ts; update(dt); }
+  const kd=e=>{ const d=KEY[e.code]; if(!d) return; e.preventDefault(); o.onKey?.(); keys[d]=true; };
+  const ku=e=>{ const d=KEY[e.code]; if(d) keys[d]=false; };
+  const pd=e=>{ if(e.pointerType==='touch'||e.buttons){ setX(e.clientX-arena.getBoundingClientRect().left-PW/2); } };
+  const onBlur=()=>{ keys.l=keys.r=false; };
+  return {
+    start(opts){ this.stop(); o=opts; arena=o.arena; pl=o.player; signEl=o.sign; lives=LIVES; score=0; keys.l=keys.r=false; hud(); layout(); setX((AW-PW)/2);
+      window.addEventListener('keydown',kd); window.addEventListener('keyup',ku); window.addEventListener('blur',onBlur);
+      arena.addEventListener('pointerdown',pd); arena.addEventListener('pointermove',pd);
+      last=performance.now(); newRound(); raf=requestAnimationFrame(loop); },
+    stop(){ cancelAnimationFrame(raf); raf=0; window.removeEventListener('keydown',kd); window.removeEventListener('keyup',ku); window.removeEventListener('blur',onBlur);
+      if(arena){ arena.removeEventListener('pointerdown',pd); arena.removeEventListener('pointermove',pd); } keys.l=keys.r=false; clearItems(); state='idle'; },
+    press(d,on){ keys[d]=on; },
+    restart(){ lives=LIVES; score=0; hud(); newRound(); raf||(raf=requestAnimationFrame(loop)); },
+    peek(){ return {lives,score,state,px,PW,items:items.filter(i=>i.active).map(i=>({x:i.x,w:i.w,y:i.y,ok:i.ok}))}; }
+  };
+})();
+
+const TOUCH=('ontouchstart' in window)||navigator.maxTouchPoints>0;
+function dpadShow(on){ ['#dpad','#dpad2'].forEach(id=>$(id)?.classList.toggle('hidden',!(on&&TOUCH))); $('#keyhint')?.classList.toggle('hidden',on&&TOUCH); }
+window.addEventListener('touchstart',()=>{ if(routeName()==='juego') dpadShow(true); },{passive:true});
+let lastGM=null;
+function askMaze(c){
+  return new Promise(res=>{
+    const q=prep(gameQuestion(lastGM)); lastGM=q.m; let r=null;
+    const draw=()=>{ const m=$('#modal'); m.innerHTML=`<div class="sheet"><span class="mchip" style="--c:${COLORS[c]};margin-bottom:10px">Integral ${CNAME[c]}</span><br>${qHTML(q,r,'Continuar')}</div>`; m.classList.remove('hidden'); };
+    S.qh={ answer:k=>{ if(r) return; r={ok:q.opts[k].ok,k}; draw(); },
+           num:()=>{ if(r) return; const x=numAnswer(q); if(!x) return; r=x; draw(); },
+           next:()=>{ $('#modal').classList.add('hidden'); S.qh=null; res(!!r?.ok); } };
+    draw();
+  });
+}
+function holdBtn(b,fn){
+  const dn=e=>{ e.preventDefault(); try{ b.setPointerCapture(e.pointerId); }catch(_){} b.classList.add('down'); fn(b.dataset.dir,true); };
+  const up=e=>{ e.preventDefault(); b.classList.remove('down'); fn(b.dataset.dir,false); };
+  b.addEventListener('pointerdown',dn); ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,up)); b.addEventListener('contextmenu',e=>e.preventDefault());
+}
+function setupGame(){
+  document.querySelectorAll('#dpad [data-dir]').forEach(b=>holdBtn(b,(d,on)=>Maze.press(d,on)));
+  document.querySelectorAll('#dpad2 [data-dir]').forEach(b=>holdBtn(b,(d,on)=>Drop.press(d,on)));
+  dpadShow(true);
+}
+const lastNode=u=>P(u).nodes.length-1;
+function startGame(){ const u=parts()[1], g=P(u)?.nodes[lastNode(u)].game; document.activeElement?.blur?.(); if(g==='drop') startDrop(u); else if(g==='maze') startMaze(u); }
+function startMaze(u){
+  $('#gintro').classList.add('hidden');
+  Maze.start({canvas:$('#gcanvas'),hud:$('#dhud'),ask:askMaze,toast,onKey:()=>dpadShow(false),
+    win:s=>{ markLesson(u,lastNode(u),0);
+      const m=Math.floor(s.t/60), sec=String(Math.floor(s.t%60)).padStart(2,'0'), w=$('#gwin');
+      w.innerHTML=`<div class="sheet big"><div class="e" style="color:var(--green)">✓</div><h3>¡Laberinto superado!</h3><p style="color:var(--soft);font-weight:700;margin:8px 0 14px">Correctas: ${s.ok} · Falladas: ${s.bad} · Tiempo: ${m}:${sec}</p>
+        <div class="stack"><button class="btn btn-primary" data-act="grestart">Jugar de nuevo</button><button class="btn btn-ghost" data-go="nodo/${u}/${lastNode(u)}">Volver al camino</button></div></div>`;
+      w.classList.remove('hidden'); }});
+}
+function startDrop(u){
+  $('#dintro').classList.add('hidden');
+  const end=(html)=>{ const w=$('#dend'); w.innerHTML=`<div class="sheet big">${html}</div>`; w.classList.remove('hidden'); };
+  Drop.start({arena:$('#darena'),player:$('#dplayer'),sign:$('#dsign'),hud:$('#dhud'),onKey:()=>dpadShow(false),
+    win:s=>{ markLesson(u,lastNode(u),0); end(`<div class="e" style="color:var(--green)">✓</div><h3>¡Lo lograste!</h3><p style="color:var(--soft);font-weight:700;margin:8px 0 14px">Atrapaste 10 respuestas correctas con ${s.lives} ${s.lives===1?'vida':'vidas'} de sobra.</p>
+      <div class="stack"><button class="btn btn-primary" data-act="grestart">Jugar de nuevo</button><button class="btn btn-ghost" data-go="nodo/${u}/${lastNode(u)}">Volver al camino</button></div>`); },
+    lose:s=>end(`<div class="e" style="color:var(--red)">✕</div><h3>Te quedaste sin vidas</h3><p style="color:var(--soft);font-weight:700;margin:8px 0 14px">Atrapaste ${s.score} de 10 respuestas correctas.</p>
+      <div class="stack"><button class="btn btn-primary" data-act="grestart">Reintentar</button><button class="btn btn-ghost" data-go="nodo/${u}/${lastNode(u)}">Volver al camino</button></div>`)});
+}
+
+/* ---------- formularios emergentes ---------- */
+let FORM=null;
+function openForm({title,fields,okText='Guardar',onSubmit}){
+  FORM=onSubmit;
+  const input=f=>f.type==='textarea'?`<textarea id="f_${f.id}" ${f.req?'required':''} style="min-height:${f.h||110}px">${esc(f.value||'')}</textarea>`
+    :f.type==='checkbox'?`<label class="chk"><input id="f_${f.id}" type="checkbox" ${f.value?'checked':''}><span>${esc(f.label)}</span></label>`
+    :`<input id="f_${f.id}" type="${f.type||'text'}" value="${esc(f.value??'')}" ${f.req?'required':''}>`;
+  $('#modal').innerHTML=`<form class="sheet" data-form="modal"><h3>${esc(title)}</h3><div id="ferr"></div>
+    ${fields.map(f=>`<div class="field">${f.type==='checkbox'?'':`<label for="f_${f.id}">${esc(f.label)}</label>`}${input(f)}${f.hint?`<small>${esc(f.hint)}</small>`:''}</div>`).join('')}
+    <div class="stack"><button class="btn btn-primary" type="submit">${okText}</button><button type="button" class="btn btn-ghost" data-act="closeModal">Cancelar</button></div></form>`;
+  $('#modal').classList.remove('hidden');
+}
+const fv=id=>document.getElementById('f_'+id).value.trim();
+const fc=id=>document.getElementById('f_'+id).checked;
+
+const parseRes=t=>t.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{ const [a,...r]=l.split('|'); return {t:a.trim(),u:(r.join('|')||'').trim()}; });
+const serRes=rs=>(rs||[]).map(r=>r.u?`${r.t} | ${r.u}`:r.t).join('\n');
+
+/* ---------- acciones ---------- */
+const ACT={
+  tab:el=>{ S.authTab=el.dataset.v; S.authErr=''; render(); },
+  reload:()=>location.reload(),
+  logout:()=>{ Maze.stop(); Drop.stop(); signOut(auth); go('home'); },
+  locked:()=>toast('Termina el círculo anterior para abrir este.'),
+  closeModal:()=>{ $('#modal').classList.add('hidden'); FORM=null; },
+  qa:el=>S.qh?.answer(+el.dataset.k), qnum:()=>S.qh?.num(), qnext:()=>S.qh?.next(),
+  lretry:()=>{ const L=S.L; startLesson(L.u,L.n,L.l); render(); },
+  gstart:()=>startGame(),
+  grestart:()=>{ $('#gwin')?.classList.add('hidden'); $('#dend')?.classList.add('hidden'); if($('#darena')) Drop.restart(); else Maze.restart(); },
+
+  newThread:()=>openForm({title:'Nuevo hilo',okText:'Publicar',fields:[{id:'t',label:'Título',req:1},{id:'b',label:'Mensaje',type:'textarea',req:1,hint:'Puedes escribir fórmulas entre signos $ $, por ejemplo $\\int x\\,dx$.'}],
+    onSubmit:safe(async()=>{ const r=await addDoc(col('threads'),{title:fv('t'),body:fv('b'),uid:S.user.uid,name:S.profile.name,createdAt:Date.now()}); go('foro/'+r.id); })}),
+  delThread:safe(async el=>{ if(!confirm('¿Eliminar este hilo?')) return; await deleteDoc(dref('threads',el.dataset.id)); go('foro'); }),
+  delReply:safe(async el=>{ await deleteDoc(dref('threads',parts()[1],'replies',el.dataset.id)); }),
+
+  newAct:()=>actForm(),
+  editAct:el=>actForm(S.acts.find(x=>x.id===el.dataset.id)),
+  delAct:safe(async el=>{ if(!confirm('¿Eliminar la actividad y sus archivos?')) return; const a=S.acts.find(x=>x.id===el.dataset.id);
+    await deleteDoc(dref('activities',el.dataset.id)); for(const f of a?.files||[]) await removeFileDocs(f); go('act'); }),
+  grade:safe(async el=>{ const id=el.dataset.id, g=document.getElementById('g_'+id).value;
+    if(g===''||isNaN(+g)||+g<0||+g>5){ toast('La nota debe estar entre 0 y 5.'); return; }
+    await updateDoc(dref('activities',parts()[1],'submissions',id),{grade:+g,feedback:document.getElementById('fb_'+id).value.trim(),gradedBy:S.user.uid,gradedAt:Date.now()}); toast('Nota guardada'); }),
+
+  newUnit:()=>openForm({title:'Nueva unidad',okText:'Publicar',fields:[{id:'t',label:'Título',req:1},{id:'o',label:'Orden',type:'number',value:S.units.length+1},{id:'d',label:'Descripción',type:'textarea',req:1},{id:'r',label:'Recursos',type:'textarea',h:80,hint:'Uno por línea: Título | https://enlace'}],
+    onSubmit:safe(async()=>{ await addDoc(col('units'),{title:fv('t'),order:+fv('o')||1,desc:fv('d'),resources:parseRes(fv('r')),files:[],uid:S.user.uid,createdAt:Date.now()}); })}),
+  editUnit:el=>{ const u=S.units.find(x=>x.id===el.dataset.id); openForm({title:'Editar unidad',fields:[{id:'t',label:'Título',req:1,value:u.title},{id:'o',label:'Orden',type:'number',value:u.order},{id:'d',label:'Descripción',type:'textarea',req:1,value:u.desc},{id:'r',label:'Recursos',type:'textarea',h:80,value:serRes(u.resources),hint:'Uno por línea: Título | https://enlace'}],
+    onSubmit:safe(async()=>{ await updateDoc(dref('units',u.id),{title:fv('t'),order:+fv('o')||1,desc:fv('d'),resources:parseRes(fv('r'))}); })}); },
+  delUnit:safe(async el=>{ if(!confirm('¿Eliminar la unidad y sus archivos?')) return; const u=S.units.find(x=>x.id===el.dataset.id);
+    await deleteDoc(dref('units',el.dataset.id)); for(const f of u?.files||[]) await removeFileDocs(f); go('uni'); }),
+
+  delTest:safe(async el=>{ if(!confirm('¿Eliminar el test?')) return; await deleteDoc(dref('tests',el.dataset.id)); go('tests'); }),
+  teaddq:el=>{ S.TE.qs.push(blankQ(el.dataset.t)); render(); },
+  tedelq:el=>{ if(S.TE.qs.length>1) S.TE.qs.splice(+el.dataset.qi,1); else toast('El test necesita al menos una pregunta.'); render(); },
+  tetype:el=>{ const q=S.TE.qs[+el.dataset.qi]; q.t=el.value;
+    if(q.t==='abierta'){ q.o=[]; q.c=[]; } else { while(q.o.length<2) q.o.push(''); if(q.t==='unica') q.c=q.c.slice(0,1); } render(); },
+  teaddo:el=>{ S.TE.qs[+el.dataset.qi].o.push(''); render(); },
+  tedelo:el=>{ const q=S.TE.qs[+el.dataset.qi], j=+el.dataset.oi; if(q.o.length<=2){ toast('Mínimo 2 opciones.'); return; }
+    q.o.splice(j,1); q.c=q.c.filter(x=>x!==j).map(x=>x>j?x-1:x); render(); },
+  tecorr:el=>{ const q=S.TE.qs[+el.dataset.qi], j=+el.dataset.oi;
+    q.c=q.t==='unica'?[j]:(el.checked?[...new Set([...q.c,j])]:q.c.filter(x=>x!==j)); },
+  tesave:safe(async()=>{ const E=S.TE; if(!E.title.trim()){ toast('Ponle un título al test.'); return; }
+    const questions=[];
+    for(const [i,q] of E.qs.entries()){ const text=q.q.trim(); if(!text){ toast(`La pregunta ${i+1} está vacía.`); return; }
+      if(q.t==='abierta'){ questions.push({t:'abierta',q:text,pts:q.pts||1}); continue; }
+      const keep=q.o.map((o,j)=>({o:o.trim(),ok:q.c.includes(j)})).filter(x=>x.o);
+      if(keep.length<2){ toast(`La pregunta ${i+1} necesita al menos 2 opciones.`); return; }
+      const nOk=keep.filter(x=>x.ok).length;
+      if(!nOk||(q.t==='unica'&&nOk!==1)){ toast(`Marca la respuesta correcta de la pregunta ${i+1}.`); return; }
+      questions.push({t:q.t,q:text,o:keep.map(x=>x.o),c:keep.map((x,j)=>x.ok?j:-1).filter(j=>j>=0),pts:q.pts||1}); }
+    const data={title:E.title.trim(),desc:E.desc.trim(),minutes:Math.max(0,+E.minutes||0),attempts:Math.min(5,Math.max(1,+E.attempts||1)),questions};
+    if(E.id) await updateDoc(dref('tests',E.id),data); else await addDoc(col('tests'),{...data,uid:S.user.uid,createdAt:Date.now()});
+    toast('Test publicado'); go('tests'); }),
+  tretake:()=>{ S.T.retake=true; S.T.done=false; S.T.ans={}; render(); },
+  tpick:el=>{ const i=+el.dataset.q, k=+el.dataset.k, q=S.tests.find(x=>x.id===S.T.id).questions[i];
+    if(qType(q)==='multiple'){ const a=S.T.ans[i]||[]; S.T.ans[i]=a.includes(k)?a.filter(x=>x!==k):[...a,k]; } else S.T.ans[i]=k; render(); },
+  tsubmit:safe(async()=>{ const t=S.tests.find(x=>x.id===S.T.id), qs=t.questions, T=S.T;
+    for(const [i,q] of qs.entries()){ const a=T.ans[i];
+      if(qType(q)==='abierta'?!(a||'').trim():qType(q)==='multiple'?!(a||[]).length:a===undefined){ toast(`Falta responder la pregunta ${i+1}.`); return; } }
+    let auto=0,max=0,openMax=0;
+    qs.forEach((q,i)=>{ const p=q.pts||1; max+=p; if(qType(q)==='abierta'){ openMax+=p; return; }
+      const mine=(qType(q)==='multiple'?T.ans[i]:[T.ans[i]]).slice().sort().join(), right=qCorr(q).slice().sort().join(); if(mine===right) auto+=p; });
+    const rec={uid:S.user.uid,name:S.profile.name,answers:Object.fromEntries(qs.map((q,i)=>[i,qType(q)==='abierta'?T.ans[i].trim():T.ans[i]])),auto,max,openMax,attempts:(T.prev?.attempts||0)+1,updatedAt:Date.now()};
+    await setDoc(dref('tests',t.id,'results',S.user.uid),rec); T.prev=rec; T.grade=null; T.done=true; render(); }),
+  tgrade:safe(async el=>{ const uid=el.dataset.uid, t=S.tests.find(x=>x.id===parts()[1]), r=S.cur.results.find(x=>x.id===uid), graded={};
+    for(const [i,q] of t.questions.entries()){ if(qType(q)!=='abierta') continue; const v=document.getElementById(`gr_${uid}_${i}`).value;
+      if(v===''||isNaN(+v)||+v<0||+v>(q.pts||1)){ toast(`Pon un puntaje válido (0 a ${q.pts||1}) en la pregunta ${i+1}.`); return; } graded[i]=+v; }
+    await setDoc(dref('tests',t.id,'grades',uid),{graded,attempt:r.attempts,gradedBy:S.user.uid,gradedAt:Date.now()}); toast('Calificación guardada'); }),
+
+  /* archivos adjuntos */
+  pickfile:el=>{ const f=el.files[0]; el.value=''; if(!f) return; const err=checkFile(f); if(err){ toast(err); return; } S.pf={ctx:el.dataset.ctx,file:f}; render(); },
+  dl:el=>{ const m=findFile(el.dataset.fid); if(m) downloadFile(m); else toast('No se encontró el archivo.'); },
+  upload:safe(async el=>{ const ctx=el.dataset.ctx, f=S.pf?.file; if(!f||S.upl) return; const [kind,id]=ctx.split(':'), desc=($('#att_d')?.value||'').trim();
+    S.upl={ctx,pct:0}; render();
+    try{
+      const meta=await uploadFile(f,{scope:kind==='sub'?'private':'public',actId:kind==='sub'?id:undefined,desc},p=>{ S.upl.pct=p; const b=$('#upbar'); if(b) b.style.width=Math.round(p*100)+'%'; });
+      if(kind==='act') await updateDoc(dref('activities',id),{files:[...(S.acts.find(x=>x.id===id).files||[]),meta]});
+      else if(kind==='unit') await updateDoc(dref('units',id),{files:[...(S.units.find(x=>x.id===id).files||[]),meta]});
+      else await setDoc(dref('activities',id,'submissions',S.user.uid),{uid:S.user.uid,name:S.profile.name,files:[...(S.cur?.sub?.files||[]),meta],updatedAt:Date.now()},{merge:true});
+      S.pf=null; toast('Archivo subido');
+    } finally { S.upl=null; render(); } }),
+  rmfile:safe(async el=>{ if(!confirm('¿Quitar este archivo?')) return; const fid=el.dataset.fid, [kind,id]=el.dataset.ctx.split(':'), meta=findFile(fid); if(!meta) return;
+    if(kind==='act') await updateDoc(dref('activities',id),{files:(S.acts.find(x=>x.id===id).files||[]).filter(f=>f.id!==fid)});
+    else if(kind==='unit') await updateDoc(dref('units',id),{files:(S.units.find(x=>x.id===id).files||[]).filter(f=>f.id!==fid)});
+    else await setDoc(dref('activities',id,'submissions',S.user.uid),{files:(S.cur?.sub?.files||[]).filter(f=>f.id!==fid),updatedAt:Date.now()},{merge:true});
+    await removeFileDocs(meta); toast('Archivo quitado'); }),
+
+  uenroll:safe(async el=>{ await updateDoc(dref('users',el.dataset.id),{enrolled:el.dataset.v==='1'}); toast(el.dataset.v==='1'?'Acceso concedido':'Acceso retirado'); }),
+  urole:safe(async el=>{ await updateDoc(dref('users',el.dataset.id),{role:el.value}); toast('Rol actualizado'); })
+};
+function actForm(a){
+  openForm({title:a?'Editar actividad':'Nueva actividad',okText:a?'Guardar':'Publicar',fields:[
+    {id:'t',label:'Título',req:1,value:a?.title},{id:'d',label:'Descripción',type:'textarea',req:1,value:a?.desc},
+    {id:'due',label:'Fecha de entrega',type:'date',value:a?.due},
+    {id:'close',type:'checkbox',label:'Dejar de recibir entregas después de la fecha de vencimiento',value:a?.closeAfter,hint:'Si no la marcas, los estudiantes pueden entregar aunque la fecha haya pasado. Puedes cambiarla cuando quieras.'}],
+    onSubmit:async()=>{ const due=fv('due'), close=fc('close'), ferr=m=>{ document.getElementById('ferr').innerHTML=`<div class="err">${esc(m)}</div>`; };
+      if(close&&!due){ ferr('Para cerrar la actividad necesitas una fecha de entrega.'); throw new Error('validación'); }
+      const data={title:fv('t'),desc:fv('d'),due,dueTs:due?new Date(due+'T23:59:59').getTime():0,closeAfter:close};
+      try{ if(a) await updateDoc(dref('activities',a.id),data); else await addDoc(col('activities'),{...data,files:[],uid:S.user.uid,createdAt:Date.now()}); }
+      catch(e){ console.error(e); ferr(e.code==='permission-denied'?'No tienes permiso para esta acción.':e.message); throw e; } }});
+}
+
+/* ---------- formularios (submit) ---------- */
+const AUTHERR={'auth/invalid-credential':'Correo o contraseña incorrectos.','auth/wrong-password':'Correo o contraseña incorrectos.','auth/user-not-found':'Correo o contraseña incorrectos.',
+  'auth/email-already-in-use':'Ese correo ya está registrado.','auth/weak-password':'La contraseña debe tener al menos 6 caracteres.','auth/invalid-email':'El correo no es válido.',
+  'auth/too-many-requests':'Demasiados intentos. Espera un momento.','auth/network-request-failed':'Sin conexión a internet.'};
+const FORMS={
+  auth:async()=>{ const reg=S.authTab==='reg', mail=$('#a_mail').value.trim(), pass=$('#a_pass').value; S.authErr='';
+    try{
+      if(reg){ S.pendingName=$('#a_name').value.trim(); const c=await createUserWithEmailAndPassword(auth,mail,pass); try{ await updateProfile(c.user,{displayName:S.pendingName}); }catch(_){} }
+      else await signInWithEmailAndPassword(auth,mail,pass);
+    }catch(e){ S.authErr=AUTHERR[e.code]||'No se pudo continuar: '+(e.code||e.message); render(); } },
+  modal:async f=>{ if(!FORM) return; try{ await FORM(); $('#modal').classList.add('hidden'); FORM=null; }catch(e){ /* el mensaje ya se mostró */ } },
+  reply:safe(async()=>{ const t=$('#reply_t').value.trim(); if(!t) return;
+    await addDoc(col('threads',parts()[1],'replies'),{uid:S.user.uid,name:S.profile.name,role:role(),text:t,createdAt:Date.now()}); $('#reply_t').value=''; }),
+  sub:safe(async()=>{ const id=parts()[1], a=S.acts.find(x=>x.id===id), text=$('#sub_t').value.trim(), link=$('#sub_l').value.trim();
+    if(actClosed(a)){ toast('El plazo de entrega terminó.'); return; }
+    if(!text&&!(S.cur?.sub?.files||[]).length){ toast('Escribe tu respuesta o adjunta un archivo.'); return; }
+    await setDoc(dref('activities',id,'submissions',S.user.uid),{uid:S.user.uid,name:S.profile.name,text,link,updatedAt:Date.now()},{merge:true}); toast('Entrega guardada'); })
+};
+
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]'); if(g){ $('#modal').classList.add('hidden'); go(g.dataset.go); return; }
+  const a=e.target.closest('[data-act]'); if(a&&!a.disabled) ACT[a.dataset.act]?.(a,e);
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.id==='numin'){ e.preventDefault(); S.qh?.num(); } });
+window.addEventListener('unhandledrejection',e=>{ console.error(e.reason); if(S.user&&!S.profile&&!S.fatal){ S.fatal='Error inesperado: '+(e.reason?.message||e.reason); render(); } });
+document.addEventListener('input',e=>{ const t=e.target;
+  if(t.dataset?.te!==undefined&&S.TE){ const k=t.dataset.te, i=+t.dataset.qi, j=+t.dataset.oi;
+    if(k==='q') S.TE.qs[i].q=t.value; else if(k==='o') S.TE.qs[i].o[j]=t.value; else if(k==='pts') S.TE.qs[i].pts=Math.max(1,+t.value||1);
+    else S.TE[k]=(k==='minutes'||k==='attempts')?+t.value:t.value; }
+  if(t.dataset?.ta!==undefined&&S.T) S.T.ans[+t.dataset.ta]=t.value; });
+document.addEventListener('submit',e=>{ const f=e.target.closest('[data-form]'); if(!f) return; e.preventDefault(); FORMS[f.dataset.form]?.(f); });
+document.addEventListener('change',e=>{ const c=e.target.closest('[data-chg]'); if(c) ACT[c.dataset.chg]?.(c,e); });
+
+route();
+
+</script>
+</body>
+</html>
